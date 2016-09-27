@@ -1,11 +1,12 @@
 open Lexing
-
+   
 let _ =
-  let filechan = open_in "./trace.trc" in
+  Cmdline.scan_cmd_line;
+  let filechan = open_in !Cmdline.file in
   let lexbuf   = Lexing.from_channel filechan in
   let content  =
     try
-      Parser.file Lexer.main lexbuf
+      Parser.trace Lexer.main lexbuf
     with
     | Parsing.Parse_error ->
        failwith ("error-> parsing of lexeme: " ^ (Lexing.lexeme lexbuf)
@@ -15,3 +16,28 @@ let _ =
        failwith ("Lexing error during parsing: Eof")
   in
   close_in filechan;
+
+  (*List.iter (
+      fun i ->
+      i#print
+    ) content;*)
+
+  (*print_int (List.length content);
+  print_string ("-");
+  print_int (Hashtbl.length Trace.instruction_table);
+  print_string ("\n");*)
+ (* Hashtbl.iter (
+      fun _ i -> i#print 
+    ) Trace.instruction_table;
+  print_string ("\n");*)
+  (*List.iter (
+      fun i -> i#print 
+    ) !Trace.function_list;*)
+
+(*  (List.hd !Trace.function_list)#print_trace;
+  (List.hd !Trace.function_list)#print_fn_trace 0*)
+
+  let trace = new Trace.trace in
+  trace#fill content;
+  trace#print_trace_fn !Cmdline.breakpoint;
+  trace#print_trace !Cmdline.breakpoint

@@ -3,6 +3,8 @@
   open Lexing
   exception Eof
 
+  let debug_ = false
+
   let error lexbuf msg =
     " LEXER: " ^ msg ^ "\t\tline:" ^ (string_of_int lexbuf.lex_curr_p.pos_lnum) ^ "\n"
 
@@ -18,13 +20,17 @@ let alpha = ['a'-'z''A'-'Z']
 let decimalDigit = ['0'-'9']
 let hexaDigit = ['0'-'9''a'-'f'] 
 
-let pc = "0x" (hexaDigit)+ (space '<' (alpha|decimalDigit|'_')+ ('@' alpha+)? ('+' (decimalDigit)+)? '>')?
-let instruction = space (alpha|decimalDigit|comma|tab|'#'|space|"//"|'.'|'<'|'>'|'_'|'+'|'-'|'@'|'['|']'|'{'|'}'|'!')+ '\n' 
+let label = '<' (alpha|decimalDigit|'_')+ ('.' decimalDigit+)? ('@' alpha+)? ('+' (decimalDigit)+)? '>'
+                  
+let pca = "0x" (hexaDigit)+ (*(space label)?*)
+let pcl = label
+let comment = "\t// " '#' '-'? decimalDigit*
+let instruction = (alpha|decimalDigit|(comma space)|comma|tab|label|'#'|" #"|'.'|'_'|'-'|'+'|'['|']'|'{'|'}'|'!'|(pca space pcl))+ (space* comment)? '\n' 
   
 rule main = parse
               
   | (space | tab) {
-    debug lexbuf "space-or-tab";
+    if(debug_) then debug lexbuf "space-or-tab";
     main lexbuf
   }
 
@@ -34,20 +40,25 @@ rule main = parse
     EOL
   }*)
 
-  | pc as str {
-    debug lexbuf "pc";
-    PC( str )
+  | pca as str {
+    if(debug_) then debug lexbuf "pca";
+    PCA( str )
+             }
+
+                 | pcl as str {
+    if(debug_) then debug lexbuf "pcl";
+    PCL( str )
   }
 
   | instruction as str {
-    debug lexbuf "instruction";
+    if(debug_) then debug lexbuf "instruction";
     Lexing.new_line lexbuf;                   
     INSTRUCTION( str )
   }                        
              
  
   | eof  {
-    debug lexbuf "eof";
+    if(debug_) then debug lexbuf "eof";
     EOF
   }		 
 
