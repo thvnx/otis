@@ -17,27 +17,14 @@ let _ =
   in
   close_in filechan;
 
-  (*List.iter (
-      fun i ->
-      i#print
-    ) content;*)
-
-  (*print_int (List.length content);
-  print_string ("-");
-  print_int (Hashtbl.length Trace.instruction_table);
-  print_string ("\n");*)
- (* Hashtbl.iter (
-      fun _ i -> i#print 
-    ) Trace.instruction_table;
-  print_string ("\n");*)
-  (*List.iter (
-      fun i -> i#print 
-    ) !Trace.function_list;*)
-
-(*  (List.hd !Trace.function_list)#print_trace;
-  (List.hd !Trace.function_list)#print_fn_trace 0*)
-
   let trace = new Trace.trace in
-  trace#fill content;
-  trace#print_trace_fn !Cmdline.breakpoint;
-  trace#print_trace !Cmdline.breakpoint
+  trace#fill content; (* build trace IR *)
+
+  if !Cmdline.cfg_graphviz then trace#dot_trace_fn !Cmdline.breakpoint;
+  if !Cmdline.trace_graphviz then trace#dot_trace !Cmdline.breakpoint;
+  if !Cmdline.cfg_text then trace#print_trace_fn !Cmdline.breakpoint;
+  if !Cmdline.trace_text then trace#print_trace !Cmdline.breakpoint;
+  
+  (*trace#print_nb_instruction !Cmdline.breakpoint;*)
+  
+  (*trace#exec !Cmdline.breakpoint;*)

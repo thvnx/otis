@@ -1,180 +1,5 @@
 open Printf
   
-(*class instruction(_code, _instr) =
-object(self)
-  val code:int = int_of_string _code
-  val instr:string = _instr
-
-  val mutable nb_called = 0
-
-  method iter =
-    nb_called <- nb_called + 1
-
-  (*method branch_type =
-    match String.sub instr 0 (String.index ' ') with
-    | "bl" -> CALL
-    | "ret" -> RETURN
-    | "b" -> JUMP
-    | _ -> NOBRANCH*)
-                       
-  method print =
-    printf "0x%x[%d]\t %s" code nb_called instr                 
-end;;
-
-class fonction(_name) =
-object(self)
-  val name:string = _name
-  val mutable parent:fonction option = None
-  val mutable children:fonction option = None 
-
-  val mutable trace:instruction list = []
-
-  method get_name = name
-
-  method set_parent p =
-  (* check if parent == none *)
-    parent <- Some p
-
-  method set_children p =
-  (* check if parent == none *)
-    children <- Some p
-                                     
-  method add_instruction i =
-    trace <- trace @ [i]
-
-  method print =
-    printf "%s %d\n" name (List.length trace)
-
-  method print_fn_trace ind =
-    for i = 0 to ind do
-      printf " "
-    done;
-    match children with
-    | None ->
-       printf "| %s\n" name
-    | Some c ->
-       printf "| %s\n" name;
-       c#print_fn_trace (ind+0)
-      
-
-  method print_trace =
-    List.iter (
-        fun i ->
-        i#print
-      ) trace
-end;;
-
-let instruction_table = Hashtbl.create 50000;;
-let function_table = Hashtbl.create 50;;
-  
-let decode((_pca, _pcl), _instr) =
-  let ins_o =
-    try
-      Hashtbl.find instruction_table _pca
-    with
-      Not_found ->
-      let ins = new instruction(_pca, _instr) in
-      Hashtbl.add instruction_table _pca ins;
-      ins
-  in
-  ins_o#iter;
-  let (fn_name, offset) =
-    match _pcl with
-      Some l ->
-      let len =
-        try
-          String.index l '@'
-        with
-          Not_found ->
-          try String.index l '+'
-          with Not_found -> String.index l '>'
-      in
-      ((String.sub l 1 (len-1)), 0)
-    | None -> ("0", 0)
-  in
-  let fn_o =
-    try
-      Hashtbl.find function_table fn_name
-    with
-      Not_found ->
-      let fn = new fonction(fn_name) in
-      Hashtbl.add function_table fn_name fn;
-      fn
-  in
-  fn_o#add_instruction ins_o;
-  ins_o
-  
-;;
-
-
-
-
-
-(* decode a label <label_name@...+...> as (label_name, 0) *)
-let decode_label label =
-  match label with
-    Some l ->
-    let len =
-      try
-        String.index l '@'
-      with
-        Not_found ->
-        try String.index l '+'
-        with Not_found -> String.index l '>'
-    in
-    (Some (String.sub l 1 (len-1)), Some 0)
-  | None -> (None, None)
-;;
-let decode_instruction pc asm =
-  let ins_o =
-    try
-      Hashtbl.find instruction_table pc
-    with
-      Not_found ->
-      let ins = new instruction(pc, asm) in
-      Hashtbl.add instruction_table pc ins;
-      ins
-  in
-  ins_o#iter;
-  ins_o
-;;
-let parent_hierarchy = ref [new fonction("trace_master")] ;;
-let function_list = ref [] ;;
-let next_rel = ref false;;
-   
-let decode2((_pca, _pcl), _instr) =
-  let (fname, _) = decode_label _pcl in
-  let instr = (decode_instruction _pca _instr) in
-
-  
-  
-  match fname with
-  | Some f ->
-     let fn = 
-       if (List.hd !parent_hierarchy)#get_name <> f then
-         begin
-           let tmp = new fonction(f) in
-           function_list := !function_list @ [tmp];
-
-           (List.hd !parent_hierarchy)#set_children tmp;
-           tmp#set_parent (List.hd !parent_hierarchy);
-
-           parent_hierarchy := [tmp];
-           tmp
-         end
-       else
-         begin
-           (List.hd !parent_hierarchy)
-         end
-     in
-     fn#add_instruction instr;
-
-  
-     instr  
-  | None -> failwith ("function name unknown")
-   
-;;
- *)
 
 type instruction_branch_type =
   | NoBranch
@@ -213,6 +38,7 @@ object(self)
 
   method get_scope = scope
   method get_code = code
+  method get_code_str = string_of_int code
 
   method get_name =
     let len = try String.index instr '\t' with Not_found -> (String.length instr)-1 in String.sub instr 0 len
@@ -231,40 +57,218 @@ object(self)
     printf "0x%x[%d]\t %s" code nb_called instr                 
 end;;
 
+class execUnit =
+object
+  
+  val mutable instruction_issued = 0
+  
+  method issue_instruction (instr:trace_instruction) =
+    printf "execution of %s\n" instr#get_name;
+    instruction_issued <- instruction_issued + 1
 
-class trace_function(_name) =
+end ;;
+  
+class trace_function ?parent _name =
 object(self)
   val name:string = _name
-  val mutable trace:trace_instruction list = []
-  val mutable childs:trace_function list = []
+  (*val mutable trace:trace_instruction list = []
+  val mutable childs:trace_function list = []*)
+  (* todo: choose between trace and childs or trace2 *)
+  val mutable trace2:(trace_instruction * trace_function option) list = []
+
+  val eu = new execUnit
 
   method get_name = name
+  method get_id = (2*(Obj.magic self))
                                      
   method add_instruction i =
-    trace <- trace @ [i]
+    (* trace <- trace @ [i];*)
+    trace2 <- (i, None) :: trace2
 
   method add_children c =
     (*printf "Add a child in %s\n" name;*)
-    childs <- childs @ [c]
+    (* childs <- childs @ [c];*)
+    let (new_hd, _) = (List.hd trace2) in
+    trace2 <- (new_hd, Some c) :: List.tl trace2
     
   method print =
-    printf "%s[%d]\n" name (List.length trace)
+    printf "%s[#i:%d, d:%d]\n" name (List.length trace2) self#depth
 
   method print_trace =
-    List.iter (
+    (*List.iter (
         fun i ->
         i#print
-      ) trace
+      ) trace*)
+    let rec prt l =
+      match l with
+      | [] -> ()
+      | (h, child)::t ->
+         h#print;
+         begin match child with None -> () | Some c -> c#print_trace end;
+         prt t
+    in
+    prt (List.rev trace2)
 
-  method print_trace_fn (recur:int) =
-    for i = 1 to recur-1 do printf "|" done;
+  method last_instruction =
+    let (i, _) = List.hd trace2 in
+    i
+
+  method nb_instruction =
+    (*let nb = ref (List.length trace) in
+    List.iter (
+        fun i -> nb := !nb + i#nb_instruction
+      ) childs;
+    !nb*)
+    let rec nb l acc =
+      match l with
+      | [] -> acc
+      | (h, child)::t ->
+         nb t (acc+1+(match child with None -> 0 | Some c -> c#nb_instruction))
+    in
+    nb (List.rev trace2) 0   
+
+  method depth =
+    match parent with
+      None -> 0
+    | Some p -> 1 + p#depth
+
+  method exec  =
+    List.iter (
+        fun (i, c) ->
+        match c with
+          None -> eu#issue_instruction i
+        | Some f -> eu#issue_instruction i; printf "jump onto %s (#i:%d, d:%d)\n" f#get_name f#nb_instruction f#depth; f#exec
+      ) (List.rev trace2)
+    
+              (*method print_trace_fn (recur:int) =*)
+    (*for i = 1 to recur-1 do printf "|" done;
     printf "-> %s[%d]\n" name (List.length trace);
     if recur > 0 then begin
       List.iter (
           fun i ->
           i#print_trace_fn (recur+1)
         ) childs;
-      end;
+      end;*)
+  method print_trace_fn =
+    let rec prt l =
+      match l with
+      | [] -> ()
+      | (_, child)::t ->
+         begin
+           match child with
+           | None -> ()
+           | Some c -> c#print_trace_fn;
+         end;
+         prt t
+    in
+    for i = 1 to self#depth do printf "-" done;
+    printf "> %s\n" name;
+    prt (List.rev trace2)
+
+  method dot_trace source =(* take into account trace2 and the child information *)
+    (*let uniq_nodes = Hashtbl.create 0 in
+    let uniq_rel = Hashtbl.create 0 in
+    let add_relation key value =
+      try
+        let (n, v) = Hashtbl.find uniq_rel key in
+        Hashtbl.replace uniq_rel key (n+1, v)
+      with
+        Not_found ->
+        Hashtbl.add uniq_rel key (1, value)
+    in
+    let rec keep_uniq (l:trace_instruction list) =
+      match l with
+      | [] -> failwith ("function trace is empty")
+      | i::[] -> Hashtbl.add uniq_nodes i#get_code i
+      | i1::i2::[] ->
+         Hashtbl.replace uniq_nodes i1#get_code i1;
+         Hashtbl.replace uniq_nodes i2#get_code i2;
+         add_relation (i1#get_code_str ^ i2#get_code_str) (i1, i2)
+      | i1::i2::t ->
+         Hashtbl.replace uniq_nodes i1#get_code i1;
+         add_relation (i1#get_code_str ^ i2#get_code_str) (i1, i2);
+         keep_uniq (i2::t)
+    in
+    keep_uniq trace;
+    printf "subgraph cluster_%d {\n" self#get_id;
+    Hashtbl.iter (
+        fun _ y ->
+        printf "\"%x\" [label=\"%s\"];\n" y#get_code y#get_name
+      ) uniq_nodes;
+    Hashtbl.iter (
+        fun _ (yn, (yr, yl)) ->
+        printf "\"%x\" -> \"%x\" [label=\"%d\"];\n" yr#get_code yl#get_code yn
+      ) uniq_rel;
+    (**)
+    List.iter (
+        fun i ->
+        i#dot_trace
+      ) childs;
+    (**)
+    printf "label=\"%s\";\n}\n" name*)
+    let nodes = ref [] in
+    let add_node node =
+      if not (List.mem node !nodes) then
+        begin
+          nodes := node :: !nodes;
+          Dot.node (node#get_code_str ^ (string_of_int self#get_id)) node#get_name
+        end
+    in
+    let relations = Hashtbl.create 0 in
+    let add_relation (src:(trace_instruction * int) option) (dst:trace_instruction) =
+      match src with
+        None -> ()
+      | Some (s, f) ->
+         let key = (s#get_code_str ^ (string_of_int f), dst#get_code_str ^ (string_of_int self#get_id)) in
+         try
+           let (nb, r) = Hashtbl.find relations key in
+           Hashtbl.replace relations key (nb+1, r)
+         with
+           Not_found ->
+           Hashtbl.add relations key (1, (s, dst))
+    in
+    let rec dot l s =
+      match l with
+      | [] -> () (* end of trace *)
+      | (ins, child)::t ->
+         add_node ins;
+         add_relation s ins;
+         match child with
+         | None   -> dot t (Some (ins, self#get_id))
+         | Some c -> c#dot_trace (Some (ins, self#get_id));
+                     dot t (Some (c#last_instruction, c#get_id))
+    in
+    Dot.open_subgraph (string_of_int self#get_id);
+    dot (List.rev trace2) source;
+    Hashtbl.iter (
+        fun (keysrc, keydst) (nb, (src, dst)) -> Dot.edge keysrc keydst (string_of_int nb)
+      ) relations;
+    Dot.close_subgraph name
+  
+    
+  method dot_trace_fn =
+    (*printf "\"%d\" [label=\"%s(%d)\"];\n" self#get_id name (List.length trace);
+    List.iter (
+        fun i ->
+        printf "\"%d\" -> \"%d\";\n" self#get_id i#get_id;
+        i#dot_trace_fn
+      ) childs;*)
+
+    let rec dot l =
+      match l with
+      | [] -> ()
+      | (_, child)::t ->
+         begin
+           match child with
+           | None -> ()
+           | Some c ->
+              c#dot_trace_fn;
+              printf "\"%d\" -> \"%d\";\n" self#get_id c#get_id;
+         end;
+         dot t
+    in
+    printf "\"%d\" [label=\"%s(%d)\"];\n" self#get_id name (List.length trace2);
+    dot (List.rev trace2)
     
 end;;
   
@@ -296,14 +300,14 @@ object(self)
          f
       | (Jump, f)::_ -> (* now, we are maybe in a new function since last instruction was a jump *)
          if f#get_name <> fn_name then begin
-             let tmp = new trace_function (fn_name) in (* create a new function *)
+             let tmp = new trace_function ~parent:f (fn_name) in (* create a new function *)
              function_list <- tmp :: function_list;
              f#add_children tmp; (* add the new function as children of called function f *)
              tmp
            end
          else f
       | (Call, f)::_ -> (* now, we are in a new function since last instruction was a call *)
-         let tmp = new trace_function (fn_name) in (* create a new function *)
+         let tmp = new trace_function ~parent:f (fn_name) in (* create a new function *)
          function_list <- tmp :: function_list;
          f#add_children tmp; (* add the new function as children of called function f *)
          tmp
@@ -329,7 +333,19 @@ object(self)
     List.iter (
         fun i -> self#add_line i
       ) content
-
+    
+  method exec breakpoint =
+    let filtered = List.filter (fun i -> i#get_name = breakpoint) function_list in
+    List.iter (
+        fun i -> i#exec
+      ) filtered
+    
+  method print_nb_instruction name =
+    let filtered = List.filter (fun i -> i#get_name = name) function_list in
+    List.iter (
+        fun i ->
+        printf "%s: %d\n" name i#nb_instruction
+      ) filtered
     
   (** Print the function hierarchy *)
   method print_trace name =
@@ -342,6 +358,31 @@ object(self)
     let filtered = List.filter (fun i -> i#get_name = name) function_list in
     List.iter (
         fun i ->
-        i#print_trace_fn 1
+        i#print_trace_fn
+      ) filtered
+
+  method dot_trace name =
+    let filtered = List.filter (fun i -> i#get_name = name) function_list in
+    begin
+      match List.length filtered with
+      | 0 -> failwith ("breakpoint " ^ name ^ " was not found")
+      | i -> if i > 1 then failwith ("breakpoint " ^ name ^ " was found too many times (" ^ (string_of_int i) ^ ")")
+    end;
+    printf "digraph G {\n";
+    List.iter (
+        fun i ->
+        i#dot_trace None
+      ) filtered;
+    printf "}\n";
+  method dot_trace_fn name =
+    let filtered = List.filter (fun i -> i#get_name = name) function_list in
+    begin
+      match List.length filtered with
+      | 0 -> failwith ("breakpoint " ^ name ^ " was not found")
+      | i -> if i > 1 then failwith ("breakpoint " ^ name ^ " was found too many times (" ^ (string_of_int i) ^ ")")
+    end;
+    List.iter (
+        fun i ->
+        i#dot_trace_fn
       ) filtered
 end;;
