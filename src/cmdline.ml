@@ -4,6 +4,9 @@ let usage_text =
 let file:string ref = ref ""
 let breakpoint = ref "main"
 
+let exec = ref false
+let nb_instruction = ref false
+         
 let cfg_graphviz = ref false
 let cfg_text = ref false
 let trace_text = ref false
@@ -14,6 +17,8 @@ let scan_cmd_line =
   let scan_options =
     Arg.align [
         ("-breakpoint", Arg.Set_string breakpoint , "<bp> set breakpoint to bp");
+        ("-exec", Arg.Set exec , " execute trace");
+        ("-nbi", Arg.Set nb_instruction , " show the number of instruction");
         ("-cfg-graphviz", Arg.Set cfg_graphviz , " Output graphviz graph");
         ("-cfg-text", Arg.Set cfg_text , " Output text graph");
         ("-trace", Arg.Set trace_text , " Output trace");

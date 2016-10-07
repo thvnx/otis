@@ -2,65 +2,78 @@
   open Parser
   open Lexing
   exception Eof
-
-  let debug_ = false
-
-  let error lexbuf msg =
-    " LEXER: " ^ msg ^ "\t\tline:" ^ (string_of_int lexbuf.lex_curr_p.pos_lnum) ^ "\n"
-
-  let debug lexbuf msg =
-    print_string (" -> debug(" ^ msg ^ "), lexeme:" ^ (Lexing.lexeme lexbuf) ^ "\n")
+  exception SyntaxError of string
 }
 
-let tab = '\t'
-let newline = '\n'
-let space = ' '
-let comma = ','
-let alpha = ['a'-'z''A'-'Z']
-let decimalDigit = ['0'-'9']
-let hexaDigit = ['0'-'9''a'-'f'] 
+let hexa_number = "0x" ['0'-'9''a'-'f']+
+let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.']* | "resbuf.11899"
+let instruction_name = ' ' ['.''a'-'z']+ '1'?
+let register_name = ['x''w''q''d''v''s']
+let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0"             
+let integer = ['+''-']? ['0'-'9']+
+let shift = ("ls" ['r''l']) | "asr"
+let vector_register = '.' ("1"|"2"|"4"|"8"|"16") ['b''h''s''d']
+let vector_element = '.' ['b''h''s''d']
+let condition = "ne" | "eq" | "cs" | "cc" | "ls" | "hi" | "le" | "pl" | "lt" | "gt"
+let extend = ['u''s'] "xt" ['b''h''w''x']
+let float = ['0'-'9'] '.' ['0'-'9']* ('e' integer)?
+          
+rule main =
+  parse
+  | ' ' | '\t' { main lexbuf }
+  | '\n' { Lexing.new_line lexbuf; EOL }
+  | ", " { PARAM_SEP }
+  | ',' { COMMA }
+  | '<' { label ("", false, None) lexbuf }              
+  | '[' { L_SQUARE }
+  | ']' { R_SQUARE }
+  | '{' { L_BRACE }
+  | '}' { R_BRACE }
+  | '!' { EXCLAM }
+  | '#' { immediate lexbuf }
 
-let label = '<' (alpha|decimalDigit|'_')+ ('.' decimalDigit+)? ('@' alpha+)? ('+' (decimalDigit)+)? '>'
-                  
-let pca = "0x" (hexaDigit)+ (*(space label)?*)
-let pcl = label
-let comment = "\t// " '#' '-'? decimalDigit*
-let instruction = (alpha|decimalDigit|(comma space)|comma|tab|label|'#'|" #"|'.'|'_'|'-'|'+'|'['|']'|'{'|'}'|'!'|(pca space pcl))+ (space* comment)? '\n' 
-  
-rule main = parse
-              
-  | (space | tab) {
-    if(debug_) then debug lexbuf "space-or-tab";
-    main lexbuf
-  }
-
- (* | newline {
-    (* debug lexbuf "newline"; *)
-    Lexing.new_line lexbuf;
-    EOL
-  }*)
-
-  | pca as str {
-    if(debug_) then debug lexbuf "pca";
-    PCA( str )
-             }
-
-                 | pcl as str {
-    if(debug_) then debug lexbuf "pcl";
-    PCL( str )
-  }
-
-  | instruction as str {
-    if(debug_) then debug lexbuf "instruction";
-    Lexing.new_line lexbuf;                   
-    INSTRUCTION( str )
-  }                        
-             
- 
-  | eof  {
-    if(debug_) then debug lexbuf "eof";
-    EOF
-  }		 
-
-  | _ as lxm
-    { print_string (error lexbuf ("Unknown token:" ^ (Char.escaped lxm))); exit 0; }
+  | "//" [^'\n']* as cmt
+                 { (*Printf.printf "comment: %s\n" cmt;*) COMMENT (cmt) }
+  | integer as i
+                 { (*Printf.printf "integer: %s\n" i;*) NUMBER (int_of_string i) }
+  | hexa_number as hn
+                     { (*Printf.printf "hexa_number: %s\n" hn;*) HEXADDR (Int64.of_string hn) }
+  | extend as ex
+                { (*Printf.printf "extend: %s\n" ex;*) EXTEND (ex) }
+  | register_name as rn
+                       { (*Printf.printf "register_name: %c\n" rn;*) REGISTER_TYPE (Char.escaped rn) }
+  | vector_element as ve
+                        { (*Printf.printf "vector_element: %s\n" ve;*) VECTOR_ELEMENT (ve) }
+  | vector_register as vr
+                         { (*Printf.printf "vector_register %s\n" vr;*) VECTOR_REGISTER (vr) }
+  | condition as cn
+                   { (*Printf.printf "condition: %s\n" cn;*) CONDITION (cn) }
+  | special_register as sr
+                          { (*Printf.printf "special_register: %s\n" sr;*) REGISTER_SPECIAL (sr) }
+  | shift as ls
+               { (*Printf.printf "shift:%s\n" ls;*) SHIFT_N_ROTATE (ls) }
+  | instruction_name as inn
+                          { (*Printf.printf "instruction_name: %s\n" inn;*) INSTRUCTION_NAME (inn) }
+  | _ { raise (SyntaxError ("Illegal character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
+  | eof { EOF }
+and immediate =
+  parse
+  | float as f
+               { (*Printf.printf "imm. float: %s\n" f;*) IMMEDIATE_FLOAT (float_of_string f) }
+  | integer as i
+                 { (*Printf.printf "imm. integer: %s\n" i;*) IMMEDIATE_DECIMAL (Int64.of_string i) }
+  | hexa_number as hn
+                     { (*Printf.printf "imm. hexa_number: %s\n" hn;*) IMMEDIATE_HEXA (Int64.of_string hn) }
+  | _ { raise (SyntaxError ("Illegal immediate character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
+  | eof { raise (SyntaxError ("Immadiate is not terminated")) }
+and label l =
+  parse
+  | function_name as fn
+                       { (*Printf.printf "function_name: %s\n" fn;*) label (fn, false, None) lexbuf }
+  | "@plt" { match l with (f, _, o) -> label (f, true, o) lexbuf }
+  | '+' { label l lexbuf }
+  | ['0'-'9']* as i
+                 { match l with (f, p, _) -> label (f, p, Some (int_of_string i)) lexbuf }
+  | '>' { LABEL (l) }
+  | _ { raise (SyntaxError ("Illegal label character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
+  | eof { raise (SyntaxError ("Label is not terminated")) }

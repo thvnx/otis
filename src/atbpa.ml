@@ -25,6 +25,5 @@ let _ =
   if !Cmdline.cfg_text then trace#print_trace_fn !Cmdline.breakpoint;
   if !Cmdline.trace_text then trace#print_trace !Cmdline.breakpoint;
   
-  (*trace#print_nb_instruction !Cmdline.breakpoint;*)
-  
-  (*trace#exec !Cmdline.breakpoint;*)
+  if !Cmdline.nb_instruction then trace#print_nb_instruction !Cmdline.breakpoint;
+  if !Cmdline.exec then trace#exec !Cmdline.breakpoint;
