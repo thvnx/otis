@@ -1,0 +1,1093 @@
+xxx00xxxxxxxxxxxxxxxxxxxxxxxxxxx	Unallocated
+
+xxx100xxxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - immediate
+
+xxx10000xxxxxxxxxxxxxxxxxxxxxxxx		PC-rel. addressing
+0--10000------------------------ ADR	<Xd>, <label>
+1--10000------------------------ ADRP	<Xd>, <label>
+
+xxx10001xxxxxxxxxxxxxxxxxxxxxxxx		Add/subtract (immediate)
+---100011----------------------- Unallocated
+00010001------------------------ ADD	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
+				 MOV	<Wd|WSP>, <Wn|WSP>
+00110001------------------------ ADDS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
+				 CMN	<Wn|WSP>, #<imm>{, <shift>}
+01010001------------------------ SUB	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
+01110001------------------------ SUBS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
+				 CMP	<Wn|WSP>, #<imm>{, <shift>}
+10010001------------------------ ADD	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
+				 MOV	<Xd|SP>, <Xn|SP>
+10110001------------------------ ADDS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
+				 CMN	<Xn|SP>, #<imm>{, <shift>}
+11010001------------------------ SUB	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
+11110001------------------------ SUBS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
+				 CMP	<Xn|SP>, #<imm>{, <shift>}
+
+xxx100100xxxxxxxxxxxxxxxxxxxxxxx		Logical (immediate)
+0--1001001---------------------- Unallocated
+0001001000---------------------- AND	<Wd|WSP>, <Wn>, #<imm>
+0011001000---------------------- ORR	<Wd|WSP>, <Wn>, #<imm>
+				 MOV	<Wd|WSP>, #<imm>
+0101001000---------------------- EOR	<Wd|WSP>, <Wn>, #<imm>
+0111001000---------------------- ANDS	<Wd>, <Wn>, #<imm>
+				 TST	<Wn>, #<imm>
+100100100----------------------- AND	<Xd|SP>, <Xn>, #<imm>
+101100100----------------------- ORR	<Xd|SP>, <Xn>, #<imm>
+				 MOV	<Xd|SP>, #<imm>
+110100100----------------------- EOR	<Xd|SP>, <Xn>, #<imm>
+111100100----------------------- ANDS	<Xd>, <Xn>, #<imm>
+				 TST	<Xn>, #<imm>
+
+xxx100101xxxxxxxxxxxxxxxxxxxxxxx		Move wide (immediate)
+-01100101----------------------- Unallocated
+0--1001011---------------------- Unallocated
+000100101----------------------- MOVN	<Wd>, #<imm>{, LSL #<shift>}
+				 MOV	<Wd>, #<imm>
+010100101----------------------- MOVZ	<Wd>, #<imm>{, LSL #<shift>}
+				 MOV	<Wd>, #<imm>
+011100101----------------------- MOVK	<Wd>, #<imm>{, LSL #<shift>}
+100100101----------------------- MOVN	<Xd>, #<imm>{, LSL #<shift>}
+				 MOV	<Xd>, #<imm>
+110100101----------------------- MOVZ	<Xd>, #<imm>{, LSL #<shift>}
+				 MOV	<Xd>, #<imm>
+111100101----------------------- MOVK	<Xd>, #<imm>{, LSL #<shift>}
+
+xxx100110xxxxxxxxxxxxxxxxxxxxxxx		Bitfield
+-11100110----------------------- Unallocated
+0--1001101---------------------- Unallocated
+0001001100---------------------- SBFM	<Wd>, <Wn>, #<immr>, #<imms>
+				 ASR	<Wd>, <Wn>, #<shift>
+				 SBFIZ	<Wd>, <Wn>, #<lsb>, #<width>
+				 SBFX	<Wd>, <Wn>, #<lsb>, #<width>
+				 SXTB	<Wd>, <Wn>
+				 SXTH	<Wd>, <Wn>
+0011001100---------------------- BFM	<Wd>, <Wn>, #<immr>, #<imms>
+				 BFI	<Wd>, <Wn>, #<lsb>, #<width>
+				 BFXIL	<Wd>, <Wn>, #<lsb>, #<width>
+0101001100---------------------- UBFM	<Wd>, <Wn>, #<immr>, #<imms>
+				 LSL	<Wd>, <Wn>, #<shift>
+				 LSR	<Wd>, <Wn>, #<shift>
+				 UBFIZ	<Wd>, <Wn>, #<lsb>, #<width>
+				 UBFX	<Wd>, <Wn>, #<lsb>, #<width>
+				 UXTB	<Wd>, <Wn>
+				 UXTH	<Wd>, <Wn>
+1--1001100---------------------- Unallocated
+1001001101---------------------- SBFM	<Xd>, <Xn>, #<immr>, #<imms>
+				 ASR	<Xd>, <Xn>, #<shift>
+				 SBFIZ	<Xd>, <Xn>, #<lsb>, #<width>
+				 SBFX	<Xd>, <Xn>, #<lsb>, #<width>
+				 SXTB	<Xd>, <Wn>
+				 SXTH	<Xd>, <Wn>
+				 SXTW	<Xd>, <Wn>
+1011001101---------------------- BFM	<Xd>, <Xn>, #<immr>, #<imms>
+				 BFI	<Xd>, <Xn>, #<lsb>, #<width>
+				 BFXIL	<Xd>, <Xn>, #<lsb>, #<width>
+1101001101---------------------- UBFM	<Xd>, <Xn>, #<immr>, #<imms>
+				 LSL	<Xd>, <Xn>, #<shift>
+				 LSR	<Xd>, <Xn>, #<shift>
+				 UBFIZ	<Xd>, <Xn>, #<lsb>, #<width>
+				 UBFX	<Xd>, <Xn>, #<lsb>, #<width>
+
+xxx100111xxxxxxxxxxxxxxxxxxxxxxx		Extract
+--1100111----------------------- Unallocated
+-00100111-1--------------------- Unallocated
+-1-100111----------------------- Unallocated
+0--100111-------1--------------- Unallocated
+0--1001111---------------------- Unallocated
+00010011100-----0--------------- EXTR	<Wd>, <Wn>, <Wm>, #<lsb>
+				 ROR	<Wd>, <Ws>, #<shift>
+1--1001110---------------------- Unallocated
+10010011110--------------------- EXTR	<Xd>, <Xn>, <Xm>, #<lsb>
+				 ROR	<Xd>, <Xs>, #<shift>
+
+xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instructions
+
+0101010xxxxxxxxxxxxxxxxxxxxxxxxx		Conditional branch (immediate)
+01010100-------------------00000 :Jump: B.EQ	<label>
+01010100-------------------00001 :Jump: B.NE	<label>
+01010100-------------------00010 :Jump: B.CS	<label>
+01010100-------------------00011 :Jump: B.CC	<label>
+01010100-------------------00100 :Jump: B.MI	<label>
+01010100-------------------00101 :Jump: B.PL	<label>
+01010100-------------------00110 :Jump: B.VS	<label>
+01010100-------------------00111 :Jump: B.VC	<label>
+01010100-------------------01000 :Jump: B.HI	<label>
+01010100-------------------01001 :Jump: B.LS	<label>
+01010100-------------------01010 :Jump: B.GE	<label>
+01010100-------------------01011 :Jump: B.LT	<label>
+01010100-------------------01100 :Jump: B.GT	<label>
+01010100-------------------01101 :Jump: B.LE	<label>
+01010100-------------------01110 :Jump: B.AL	<label>
+01010100-------------------01111 :Jump: B.NV	<label>
+01010100-------------------1---- Unallocated
+01010101------------------------ Unallocated
+
+0101011xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+11010100xxxxxxxxxxxxxxxxxxxxxxxx		Exception generation
+
+1101010100xxxxxxxxxxxxxxxxxxxxxx		System
+1101010100000---000------------- Unallocated
+1101010100000---0100------------ Unallocated
+1101010100000---0100-------11111 MSR	<pstatefield>, #<imm>
+1101010100000---0101------------ Unallocated
+1101010100000---011------------- Unallocated
+1101010100000---1--------------- Unallocated
+1101010100000--0001------------- Unallocated
+1101010100000-0-001------------- Unallocated
+1101010100000011001------------- Unallocated
+11010101000000110010-------11111 HINT	#<imm>
+11010101000000110010000000011111 NOP
+11010101000000110010000000111111 YIELD
+11010101000000110010000001011111 WFE
+11010101000000110010000001111111 WFI
+11010101000000110010000010011111 SEV
+11010101000000110010000010111111 SEVL
+11010101000000110010000011-11111 HINT	#<imm>
+11010101000000110011----000----- Unallocated
+11010101000000110011----001----- Unallocated
+11010101000000110011----01011111 CLREX	{#<imm>}
+11010101000000110011----011----- Unallocated
+11010101000000110011----10011111 DSB	<option>|#<imm>
+11010101000000110011----10111111 DMB	<option>|#<imm>
+11010101000000110011----11011111 ISB	{<option>|#<imm>}
+11010101000000110011----111----- Unallocated
+11010101000001--001------------- Unallocated
+1101010100001------------------- SYS	<systemreg>{, <Xn>}
+				 AT	<systemreg>, <Xn>
+				 DC	<systemreg>, <Xn>
+				 IC	<systemreg>{, <Xn>}
+				 TLBI	<systemreg>{, <Xn>}
+110101010001-------------------- MSR	<systemreg>, <Xn>
+1101010100100------------------- Unallocated
+1101010100101------------------- SYSL	<Xd>, <systemreg>
+110101010011-------------------- MRS	<Xd>, <systemreg>
+
+1101010101xxxxxxxxxxxxxxxxxxxxxx		Unallocated
+110101011xxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+
+1101011xxxxxxxxxxxxxxxxxxxxxxxxx		Unconditional branch (register)
+1101011------------------------- Unallocated
+1101011------------------------- Unallocated
+1101011------------------------- Unallocated
+1101011000011111000000-----00000 :Jump: BR	<Xn>
+1101011000111111000000-----00000 :Call: BLR	<Xn>
+1101011001011111000000-----00000 :Return: RET	{<Xn>}
+11010110011--------------------- Unallocated
+1101011010---------------------- Unallocated
+11010110100111110000001111100000 ERET
+11010110101111110000001111100000 DRPS
+1101011011---------------------- Unallocated
+11010111------------------------ Unallocated
+
+x00101xxxxxxxxxxxxxxxxxxxxxxxxxx		Unconditional branch (immediate)
+000101-------------------------- :Jump: B	<label>
+100101-------------------------- :Call: BL	<label>
+
+x011010xxxxxxxxxxxxxxxxxxxxxxxxx		Compare & branch (immediate)
+00110100------------------------ :Jump: CBZ	<Wt>, <label>
+00110101------------------------ :Jump: CBNZ	<Wt>, <label>
+10110100------------------------ :Jump: CBZ	<Xt>, <label>
+10110101------------------------ :Jump: CBNZ	<Xt>, <label>
+
+x011011xxxxxxxxxxxxxxxxxxxxxxxxx		Test & branch (immediate)
+00110110------------------------ :Jump: TBZ	<Wt>, #<imm>, <label>
+00110111------------------------ :Jump: TBNZ	<Wt>, #<imm>, <label>
+10110110------------------------ :Jump: TBZ	<Xt>, #<imm>, <label>
+10110111------------------------ :Jump: TBNZ	<Xt>, #<imm>, <label>
+
+x11101xxxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+
+xxxx1x0xxxxxxxxxxxxxxxxxxxxxxxxx	Loads and stores
+
+0x0011000x000000xxxxxxxxxxxxxxxx		Advanced SIMD load/store multiple structures
+
+0x0011001x0xxxxxxxxxxxxxxxxxxxxx		Advanced SIMD load/store multiple structures (post-indexed)
+0-001100100-----0001------------ Unallocated
+0-001100100-----0011------------ Unallocated
+0-001100100-----0101------------ Unallocated
+0-001100100-----1001------------ Unallocated
+0-001100100-----1011------------ Unallocated
+0-001100100-----11-------------- Unallocated
+0-001100100-----0000------------ ST4	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----0010------------ ST1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----0100------------ ST3	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----0110------------ ST1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----0111------------ ST1	{ <Vt>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----1000------------ ST2	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <Xm>
+0-001100100-----1010------------ ST1	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <Xm>
+0-001100100111110000------------ ST4	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <imm>
+0-001100100111110010------------ ST1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <imm>
+0-001100100111110100------------ ST3	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <imm>
+0-001100100111110110------------ ST1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <imm>
+0-001100100111110111------------ ST1	{ <Vt>.<T> }, [<Xn|SP>], <imm>
+0-001100100111111000------------ ST2	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <imm>
+0-001100100111111010------------ ST1	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <imm>
+0-001100110-----0001------------ Unallocated
+0-001100110-----0011------------ Unallocated
+0-001100110-----0101------------ Unallocated
+0-001100110-----1001------------ Unallocated
+0-001100110-----1011------------ Unallocated
+0-001100110-----11-------------- Unallocated
+0-001100110-----0000------------ LD4	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----0010------------ LD1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----0100------------ LD3	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----0110------------ LD1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----0111------------ LD1	{ <Vt>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----1000------------ LD2	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <Xm>
+0-001100110-----1010------------ LD1	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <Xm>
+0-001100110111110000------------ LD4	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <imm>
+0-001100110111110010------------ LD1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T>, <Vt4>.<T> }, [<Xn|SP>], <imm>
+0-001100110111110100------------ LD3	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <imm>
+0-001100110111110110------------ LD1	{ <Vt>.<T>, <Vt2>.<T>, <Vt3>.<T> }, [<Xn|SP>], <imm>
+0-001100110111110111------------ LD1	{ <Vt>.<T> }, [<Xn|SP>], <imm>
+0-001100110111111000------------ LD2	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <imm>
+0-001100110111111010------------ LD1	{ <Vt>.<T>, <Vt2>.<T> }, [<Xn|SP>], <imm>
+
+0x001100xx1xxxxxxxxxxxxxxxxxxxxx		Unallocated
+0x0011010xx00000xxxxxxxxxxxxxxxx		Advanced SIMD load/store single structure
+0x0011011xxxxxxxxxxxxxxxxxxxxxxx		Advanced SIMD load/store single structure (post-indexed)
+0x00110x0xx1xxxxxxxxxxxxxxxxxxxx		Unallocated
+0x00110x0xxx1xxxxxxxxxxxxxxxxxxx		Unallocated
+0x00110x0xxxx1xxxxxxxxxxxxxxxxxx		Unallocated
+0x00110x0xxxxx1xxxxxxxxxxxxxxxxx		Unallocated
+0x00110x0xxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+1x00110xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+xx001000xxxxxxxxxxxxxxxxxxxxxxxx		Load/store exclusive
+xx001001xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+xx011x00xxxxxxxxxxxxxxxxxxxxxxxx		Load register (literal)
+xx011x01xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+xx101x000xxxxxxxxxxxxxxxxxxxxxxx		Load/store no-allocate pair (offset)
+
+xx101x001xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (post-indexed)
+0010100010---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
+0010100011---------------------- LDP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
+0010110010---------------------- STP	<St1>, <St2>, [<Xn|SP>], #<imm>
+0010110011---------------------- LDP	<St1>, <St2>, [<Xn|SP>], #<imm>
+0110100010---------------------- Unallocated
+0110100011---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
+0110110010---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
+0110110011---------------------- LDP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
+1010100010---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
+1010100011---------------------- LDP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
+1010110010---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
+1010110011---------------------- LDP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
+11101-001----------------------- Unallocated
+
+xx101x010xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (offset)
+0010100100---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
+0010100101---------------------- LDP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
+0010110100---------------------- STP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
+0010110101---------------------- LDP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
+0110100100---------------------- Unallocated
+0110100101---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
+0110110100---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
+0110110101---------------------- LDP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
+1010100100---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
+1010100101---------------------- LDP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
+1010110100---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
+1010110101---------------------- LDP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
+11101-010----------------------- Unallocated
+
+xx101x011xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (pre-indexed)
+0010100110---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
+0010100111---------------------- LDP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
+0010110110---------------------- STP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
+0010110111---------------------- LDP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
+0110100110---------------------- Unallocated
+0110100111---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
+0110110110---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
+0110110111---------------------- LDP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
+1010100110---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
+1010100111---------------------- LDP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
+1010110110---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
+1010110111---------------------- LDP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
+11101-011----------------------- Unallocated
+
+xx111x00xx0xxxxxxxxx00xxxxxxxxxx		Load/store register (unscaled immediate)
+xx111x00xx0xxxxxxxxx01xxxxxxxxxx		Load/store register (immediate post-indexed)
+xx111x00xx0xxxxxxxxx10xxxxxxxxxx		Load/store register (unprivileged)
+xx111x00xx0xxxxxxxxx11xxxxxxxxxx		Load/store register (immediate pre-indexed)
+xx111x00xx1xxxxxxxxx00xxxxxxxxxx		Unallocated
+xx111x00xx1xxxxxxxxx01xxxxxxxxxx		Unallocated
+
+xx111x00xx1xxxxxxxxx10xxxxxxxxxx		Load/store register (register offset)
+--111-00--1------0--10---------- Unallocated
+-11111001-1---------10---------- Unallocated
+00111000001---------10---------- STRB	<Wt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111000001-----011-10---------- STRB	<Wt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111000011---------10---------- LDRB	<Wt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111000011-----011-10---------- LDRB	<Wt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111000101---------10---------- LDRSB	<Xt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111000101-----011-10---------- LDRSB	<Xt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111000111---------10---------- LDRSB	<Wt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111000111-----011-10---------- LDRSB	<Wt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111100001---------10---------- STR	<Bt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111100001-----011-10---------- STR	<Bt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111100011---------10---------- LDR	<Bt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111100011-----011-10---------- LDR	<Bt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111100101---------10---------- STR	<Qt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+00111100111---------10---------- LDR	<Qt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111000001---------10---------- STRH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111000011---------10---------- LDRH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111000101---------10---------- LDRSH	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111000111---------10---------- LDRSH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111100001---------10---------- STR	<Ht>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111100011---------10---------- LDR	<Ht>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+1-111000111---------10---------- Unallocated
+1-1111001-1---------10---------- Unallocated
+10111000001---------10---------- STR	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111000011---------10---------- LDR	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111000101---------10---------- LDRSW	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111100001---------10---------- STR	<St>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111100011---------10---------- LDR	<St>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111000001---------10---------- STR	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111000011---------10---------- LDR	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111000101---------10---------- PRFM	(<prfop>|#<imm5>), [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111100001---------10---------- STR	<Dt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111100011---------10---------- LDR	<Dt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+
+xx111x00xx1xxxxxxxxx11xxxxxxxxxx		Unallocated
+
+xx111x01xxxxxxxxxxxxxxxxxxxxxxxx		Load/store register (unsigned immediate)
+-11111011----------------------- Unallocated
+0011100100---------------------- STRB	<Wt>, [<Xn|SP>{, #<pimm>}]
+0011100101---------------------- LDRB	<Wt>, [<Xn|SP>{, #<pimm>}]
+0011100110---------------------- LDRSB	<Xt>, [<Xn|SP>{, #<pimm>}]
+0011100111---------------------- LDRSB	<Wt>, [<Xn|SP>{, #<pimm>}]
+0011110100---------------------- STR	<Bt>, [<Xn|SP>{, #<pimm>}]
+0011110101---------------------- LDR	<Bt>, [<Xn|SP>{, #<pimm>}]
+0011110110---------------------- STR	<Qt>, [<Xn|SP>{, #<pimm>}]
+0011110111---------------------- LDR	<Qt>, [<Xn|SP>{, #<pimm>}]
+0111100100---------------------- STRH	<Wt>, [<Xn|SP>{, #<pimm>}]
+0111100101---------------------- LDRH	<Wt>, [<Xn|SP>{, #<pimm>}]
+0111100110---------------------- LDRSH	<Xt>, [<Xn|SP>{, #<pimm>}]
+0111100111---------------------- LDRSH	<Wt>, [<Xn|SP>{, #<pimm>}]
+0111110100---------------------- STR	<Ht>, [<Xn|SP>{, #<pimm>}]
+0111110101---------------------- LDR	<Ht>, [<Xn|SP>{, #<pimm>}]
+1-11100111---------------------- Unallocated
+1-1111011----------------------- Unallocated
+1011100100---------------------- STR	<Wt>, [<Xn|SP>{, #<pimm>}]
+1011100101---------------------- LDR	<Wt>, [<Xn|SP>{, #<pimm>}]
+1011100110---------------------- LDRSW	<Xt>, [<Xn|SP>{, #<pimm>}]
+1011110100---------------------- STR	<St>, [<Xn|SP>{, #<pimm>}]
+1011110101---------------------- LDR	<St>, [<Xn|SP>{, #<pimm>}]
+1111100100---------------------- STR	<Xt>, [<Xn|SP>{, #<pimm>}]
+1111100101---------------------- LDR	<Xt>, [<Xn|SP>{, #<pimm>}]
+1111100110---------------------- PRFM	(<prfop>|#<imm5>), [<Xn|SP>{, #<pimm>}]
+1111110100---------------------- STR	<Dt>, [<Xn|SP>{, #<pimm>}]
+1111110101---------------------- LDR	<Dt>, [<Xn|SP>{, #<pimm>}]
+
+xxxx101xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - register
+
+x0x11010110xxxxxxxxxxxxxxxxxxxxx		Data-processing (2 source)
+-0-11010110-----00000----------- Unallocated
+-0-11010110-----011------------- Unallocated
+-0-11010110-----1--------------- Unallocated
+-0011010110-----0001------------ Unallocated
+-0011010110-----0011------------ Unallocated
+-0111010110--------------------- Unallocated
+00011010110-----000010---------- UDIV	<Wd>, <Wn>, <Wm>
+00011010110-----000011---------- SDIV	<Wd>, <Wn>, <Wm>
+00011010110-----001000---------- LSLV	<Wd>, <Wn>, <Wm>
+				 LSL	<Wd>, <Wn>, <Wm>
+00011010110-----001001---------- LSRV	<Wd>, <Wn>, <Wm>
+				 LSR	<Wd>, <Wn>, <Wm>
+00011010110-----001010---------- ASRV	<Wd>, <Wn>, <Wm>
+				 ASR	<Wd>, <Wn>, <Wm>
+00011010110-----001011---------- RORV	<Wd>, <Wn>, <Wm>
+				 ROR	<Wd>, <Wn>, <Wm>
+00011010110-----010-11---------- Unallocated
+00011010110-----010000---------- CRC32B	<Wd>, <Wn>, <Wm>
+00011010110-----010001---------- CRC32H	<Wd>, <Wn>, <Wm>
+00011010110-----010010---------- CRC32W	<Wd>, <Wn>, <Wm>
+00011010110-----010100---------- CRC32CB <Wd>, <Wn>, <Wm>
+00011010110-----010101---------- CRC32CH <Wd>, <Wn>, <Wm>
+00011010110-----010110---------- CRC32CW <Wd>, <Wn>, <Wm>
+10011010110-----000010---------- UDIV	<Xd>, <Xn>, <Xm>
+10011010110-----000011---------- SDIV	<Xd>, <Xn>, <Xm>
+10011010110-----001000---------- LSLV	<Xd>, <Xn>, <Xm>
+				 LSL	<Xd>, <Xn>, <Xm>
+10011010110-----001001---------- LSRV	<Xd>, <Xn>, <Xm>
+				 LSR	<Xd>, <Xn>, <Xm>
+10011010110-----001010---------- ASRV	<Xd>, <Xn>, <Xm>
+				 ASR	<Xd>, <Xn>, <Xm>
+10011010110-----001011---------- RORV	<Xd>, <Xn>, <Xm>
+				 ROR	<Xd>, <Xn>, <Xm>
+10011010110-----010--0---------- Unallocated
+10011010110-----010-0----------- Unallocated
+10011010110-----010011---------- CRC32X	<Wd>, <Wn>, <Xm>
+10011010110-----010111---------- CRC32CX <Wd>, <Wn>, <Xm>
+
+x1x11010110xxxxxxxxxxxxxxxxxxxxx		Data-processing (1 source)
+-1-11010110-------1------------- Unallocated
+-1-11010110------1-------------- Unallocated
+-1-11010110-----1--------------- Unallocated
+-1-11010110----1---------------- Unallocated
+-1-11010110---1----------------- Unallocated
+-1-11010110--1------------------ Unallocated
+-1-11010110-1------------------- Unallocated
+-1-110101101-------------------- Unallocated
+-10110101100000000011----------- Unallocated
+-1111010110--------------------- Unallocated
+0101101011000000000000---------- RBIT	<Wd>, <Wn>
+0101101011000000000001---------- REV16	<Wd>, <Wn>
+0101101011000000000010---------- REV	<Wd>, <Wn>
+0101101011000000000011---------- Unallocated
+0101101011000000000100---------- CLZ	<Wd>, <Wn>
+0101101011000000000101---------- CLS	<Wd>, <Wn>
+1101101011000000000000---------- RBIT	<Xd>, <Xn>
+1101101011000000000001---------- REV16	<Xd>, <Xn>
+1101101011000000000010---------- REV32	<Xd>, <Xn>
+1101101011000000000011---------- REV	<Xd>, <Xn>
+				 REV64	<Xd>, <Xn>
+1101101011000000000100---------- CLZ	<Xd>, <Xn>
+1101101011000000000101---------- CLS	<Xd>, <Xn>
+
+xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
+0--01010--------1--------------- Unallocated
+00001010--0--------------------- AND	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+00001010--1--------------------- BIC	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+00101010--0--------------------- ORR	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 MOV	<Wd>, <Wm>
+00101010--1--------------------- ORN	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 MVN	<Wd>, <Wm>{, <shift> #<amount>}
+01001010--0--------------------- EOR	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01001010--1--------------------- EON	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01101010--0--------------------- ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 TST	<Wn>, <Wm>{, <shift> #<amount>}
+01101010--1--------------------- BICS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+10001010--0--------------------- AND	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+10001010--1--------------------- BIC	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+10101010--0--------------------- ORR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 MOV	<Xd>, <Xm>
+10101010--1--------------------- ORN	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 MVN	<Xd>, <Xm>{, <shift> #<amount>}
+11001010--0--------------------- EOR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11001010--1--------------------- EON	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11101010--0--------------------- ANDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 TST	<Xn>, <Xm>{, <shift> #<amount>}
+11101010--1--------------------- BICS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+
+xxx01011xx0xxxxxxxxxxxxxxxxxxxxx		Add/subtract (shifted register)
+---01011110--------------------- Unallocated
+0--01011--0-----1--------------- Unallocated
+00001011--0--------------------- ADD	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+00101011--0--------------------- ADDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 CMN	<Wn>, <Wm>{, <shift> #<amount>}
+01001011--0--------------------- SUB	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 NEG	<Wd>, <Wm>{, <shift> #<amount>}
+01101011--0--------------------- SUBS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+				 CMP	<Wn>, <Wm>{, <shift> #<amount>}
+				 NEGS	<Wd>, <Wm>{, <shift> #<amount>}
+10001011--0--------------------- ADD	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+10101011--0--------------------- ADDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 CMN	<Xn>, <Xm>{, <shift> #<amount>}
+11001011--0--------------------- SUB	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 NEG	<Xd>, <Xm>{, <shift> #<amount>}
+11101011--0--------------------- SUBS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+				 CMP	<Xn>, <Xm>{, <shift> #<amount>}
+				 NEGS	<Xd>, <Xm>{, <shift> #<amount>}
+
+xxx01011xx1xxxxxxxxxxxxxxxxxxxxx		Add/subtract (extended register)
+xxx11010000xxxxxxxxxxxxxxxxxxxxx		Add/subtract (with carry)
+xxx11010010xxxxxxxxx0xxxxxxxxxxx		Conditional compare (register)
+
+xxx11010010xxxxxxxxx1xxxxxxxxxxx		Conditional compare (immediate)
+---11010010---------1------1---- Unallocated
+---11010010---------11---------- Unallocated
+--011010010---------1----------- Unallocated
+00111010010---------10-----0---- CCMN	<Wn>, #<imm>, #<nzcv>, <cond>
+01111010010---------10-----0---- CCMP	<Wn>, #<imm>, #<nzcv>, <cond>
+10111010010---------10-----0---- CCMN	<Xn>, #<imm>, #<nzcv>, <cond>
+11111010010---------10-----0---- CCMP	<Xn>, #<imm>, #<nzcv>, <cond>
+
+xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
+---11010100---------1----------- Unallocated
+--111010100--------------------- Unallocated
+00011010100---------00---------- CSEL	<Wd>, <Wn>, <Wm>, <cond>
+00011010100---------01---------- CSINC	<Wd>, <Wn>, <Wm>, <cond>
+				 CINC	<Wd>, <Wn>, <cond>
+				 CSET <Wd>, <cond>
+01011010100---------00---------- CSINV	<Wd>, <Wn>, <Wm>, <cond>
+				 CINV	<Wd>, <Wn>, <cond>
+				 CSETM	<Wd>, <cond>
+01011010100---------01---------- CSNEG	<Wd>, <Wn>, <Wm>, <cond>
+				 CNEG	<Wd>, <Wn>, <cond>
+10011010100---------00---------- CSEL	<Xd>, <Xn>, <Xm>, <cond>
+10011010100---------01---------- CSINC	<Xd>, <Xn>, <Xm>, <cond>
+				 CINC	<Xd>, <Xn>, <cond>
+				 CSET	<Xd>, <cond>
+11011010100---------00---------- CSINV	<Xd>, <Xn>, <Xm>, <cond>
+				 CINV	<Xd>, <Xn>, <cond>
+				 CSETM	<Xd>, <cond>
+11011010100---------01---------- CSNEG	<Xd>, <Xn>, <Xm>, <cond>
+				 CNEG	<Xd>, <Xn>, <cond>
+
+xxx11010xx1xxxxxxxxxxxxxxxxxxxxx		Unallocated
+xxx11011xxxxxxxxxxxxxxxxxxxxxxxx		Data-processing (3 source)
+
+xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
+
+00001110xx10100xxxxx10xxxxxxxxxx		Unallocated
+00101110xx10100xxxxx10xxxxxxxxxx		Unallocated
+01001110xx10100xxxxx10xxxxxxxxxx		Crytographic AES
+01011110xx0xxxxx0xxx00xxxxxxxxxx		Crytographic three-register SHA
+01011110xx0xxxxx0xxx10xxxxxxxxxx		Unallocated
+01101110xx10100xxxxx10xxxxxxxxxx		Cryptographic two-register SHA
+01111110xx10100xxxxx10xxxxxxxxxx		Unallocated
+01111110xx0xxxxx0xxxx0xxxxxxxxxx		Unallocated
+01x11110xx10100xxxxx10xxxxxxxxxx		Unallocated
+01x11110000xxxxx0xxxx1xxxxxxxxxx		Advanced SIMD scalar copy
+01x111101x0xxxxx0xxxx1xxxxxxxxxx		Unallocated
+01x11110x011100xxxxx10xxxxxxxxxx		Unallocated
+
+01x11110xx10000xxxxx10xxxxxxxxxx		Advanced SIMD scalar two-register miscellaneous
+01-11110--100000000-10---------- Unallocated
+01-11110--100000001010---------- Unallocated
+01-11110--100000010-10---------- Unallocated
+01-11110--100000011010---------- Unallocated
+01-11110--100000111110---------- Unallocated
+01-11110--100001000-10---------- Unallocated
+01-11110--100001001110---------- Unallocated
+01-11110--100001010110---------- Unallocated
+01-11110--100001011110---------- Unallocated
+01-11110--100001100-10---------- Unallocated
+01-11110--100001111010---------- Unallocated
+01-111100-10000011--10---------- Unallocated
+01-111100-100001111110---------- Unallocated
+01-111101-100001011010---------- Unallocated
+01-111101-100001110010---------- Unallocated
+01011110--100000001110---------- SUQADD	<V><d>, <V><n>
+01011110--100000011110---------- SQABS	<V><d>, <V><n>
+01011110--100000100010---------- CMGT	<V><d>, <V><n>, #0
+01011110--100000100110---------- CMEQ	<V><d>, <V><n>, #0
+01011110--100000101010---------- CMLT	<V><d>, <V><n>, #0
+01011110--100000101110---------- ABS	<V><d>, <V><n>
+01011110--100001001010---------- Unallocated
+01011110--100001010010---------- SQXTN	<Vb><d>, <Va><n>
+				 SQXTN2	 <Vb><d>, <Va><n>
+010111100-100001011010---------- Unallocated
+010111100-100001101010---------- FCVTNS	<V><d>, <V><n>
+010111100-100001101110---------- FCVTMS	<V><d>, <V><n>
+010111100-100001110010---------- FCVTAS	<V><d>, <V><n>
+010111100-100001110110---------- SCVTF	<V><d>, <V><n>
+010111101-100000110010---------- FCMGT	<V><d>, <V><n>, #0.0
+010111101-100000110110---------- FCMEQ	<V><d>, <V><n>, #0.0
+010111101-100000111010---------- FCMLT	<V><d>, <V><n>, #0.0
+010111101-100001101010---------- FCVTPS	<V><d>, <V><n>
+010111101-100001101110---------- FCVTZS	<V><d>, <V><n>
+010111101-100001110110---------- FRECPE	<V><d>, <V><n>
+010111101-100001111110---------- FRECPX	<V><d>, <V><n>
+01111110--100000001110---------- USQADD	<V><d>, <V><n>
+01111110--100000011110---------- SQNEG	<V><d>, <V><n>
+01111110--100000100010---------- CMGE	<V><d>, <V><n>, #0
+01111110--100000100110---------- CMLE	<V><d>, <V><n>, #0
+01111110--100000101010---------- Unallocated
+01111110--100000101110---------- NEG	<V><d>, <V><n>
+01111110--100001001010---------- SQXTUN	<Vb><d>, <Va><n>
+				 SQXTUN2	 <Vb><d>, <Va><n>
+01111110--100001010010---------- UQXTN	<Vb><d>, <Va><n>
+				 UQXTN2	<Vb><d>, <Va><n>
+011111100-100001011010---------- FCVTXN	<Vb><d>, <Va><n>
+				 TCVTXN2	<Vb><d>, <Va><n>
+011111100-100001101010---------- FCVTNU	<V><d>, <V><n>
+011111100-100001101110---------- FCVTMU	<V><d>, <V><n>
+011111100-100001110010---------- FCVTAU	<V><d>, <V><n>
+011111100-100001110110---------- UCVTF	<V><d>, <V><n>
+011111101-100000110010---------- FCMGE	<V><d>, <V><n>, #0.0
+011111101-100000110110---------- FCMLE	<V><d>, <V><n>, #0.0
+011111101-100000111010---------- Unallocated
+011111101-100001101010---------- FCVTPU	<V><d>, <V><n>
+011111101-100001101110---------- FCVTZU	<V><d>, <V><n>
+011111101-100001110110---------- FRSQRTE	<V><d>, <V><n>
+011111101-100001111110---------- Unallocated
+
+01x11110xx11000xxxxx10xxxxxxxxxx		Advanded SIMD scalar pairwise
+01x11110xx1xx1xxxxxx10xxxxxxxxxx		Unallocated
+01x11110xx1xxx1xxxxx10xxxxxxxxxx		Unallocated
+01x11110xx1xxxxxxxxx00xxxxxxxxxx		Advanced SIMD scalar three different
+
+01x11110xx1xxxxxxxxxx1xxxxxxxxxx		Advanced SIMD scalar three same
+01-11110--1-----000001---------- Unallocated
+01-11110--1-----0001-1---------- Unallocated
+01-11110--1-----001001---------- Unallocated
+01-11110--1-----011--1---------- Unallocated
+01-11110--1-----1001-1---------- Unallocated
+01-111101-1-----110111---------- Unallocated
+01011110--1-----000011---------- SQADD	<V><d>, <V><n>, <V><m>
+01011110--1-----001011---------- SQSUB	<V><d>, <V><n>, <V><m>
+01011110--1-----001011---------- CMGT	<V><d>, <V><n>, <V><m>
+01011110--1-----001101---------- CMGE	<V><d>, <V><n>, <V><m>
+01011110--1-----001111---------- SSHL	<Vd>.<Ta>, <Vn>.<Tb>, #<shift>
+				 SSHL2	<Vd>.<Ta>, <Vn>.<Tb>, #<shift>
+01011110--1-----010001---------- SQSHL	<V><d>, <V><n>, <V><m>
+01011110--1-----010011---------- SRSHL	<V><d>, <V><n>, <V><m>
+01011110--1-----010101---------- SQRSHL	<V><d>, <V><n>, <V><m>
+01011110--1-----010111---------- ADD	<V><d>, <V><n>, <V><m>
+01011110--1-----100001---------- CMTST	<V><d>, <V><n>, <V><m>
+01011110--1-----100011---------- Unallocated
+01011110--1-----101001---------- Unallocated
+01011110--1-----101011---------- SQDMULH	<V><d>, <V><n>, <V><m>
+01011110--1-----101111---------- Unallocated
+010111100-1-----110001---------- Unallocated
+010111100-1-----110011---------- Unallocated
+010111100-1-----110101---------- Unallocated
+010111100-1-----110111---------- FMULX	<V><d>, <V><n>, <V><m>
+010111100-1-----111001---------- FCMEQ	<V><d>, <V><n>, <V><m>
+010111100-1-----111011---------- Unallocated
+010111100-1-----111101---------- Unallocated
+010111100-1-----111111---------- FRECPS	<V><d>, <V><n>, <V><m>
+010111101-1-----110001---------- Unallocated
+010111101-1-----110011---------- Unallocated
+010111101-1-----110101---------- Unallocated
+010111101-1-----111001---------- Unallocated
+010111101-1-----111011---------- Unallocated
+010111101-1-----111101---------- Unallocated
+010111101-1-----111111---------- FRSQRTS	<V><d>, <V><n>, <V><m>
+01111110--1-----000011---------- UQADD	<V><d>, <V><n>, <V><m>
+01111110--1-----001011---------- UQSUB	<V><d>, <V><n>, <V><m>
+01111110--1-----001101---------- CMHI	<V><d>, <V><n>, <V><m>
+01111110--1-----001111---------- CMHS	<V><d>, <V><n>, <V><m>
+01111110--1-----010001---------- USHL	<V><d>, <V><n>, <V><m>
+01111110--1-----010011---------- UQSHL	<V><d>, <V><n>, <V><m>
+01111110--1-----010101---------- URSHL	<V><d>, <V><n>, <V><m>
+01111110--1-----010111---------- UQRSHL	<V><d>, <V><n>, <V><m>
+01111110--1-----100001---------- SUB	<V><d>, <V><n>, <V><m>
+01111110--1-----100011---------- CMEQ	<V><d>, <V><n>, <V><m>
+01111110--1-----101001---------- Unallocated
+01111110--1-----101011---------- Unallocated
+01111110--1-----101101---------- SQRDMULH	<V><d>, <V><n>, <V><m>
+01111110--1-----101111---------- Unallocated
+011111100-1-----110001---------- Unallocated
+011111100-1-----110011---------- Unallocated
+011111100-1-----110101---------- Unallocated
+011111100-1-----110111---------- Unallocated
+011111100-1-----111001---------- FCMGE	<V><d>, <V><n>, <V><m>
+011111100-1-----111011---------- FACGE	<V><d>, <V><n>, <V><m>
+011111100-1-----111101---------- Unallocated
+011111100-1-----111111---------- Unallocated
+011111101-1-----110001---------- Unallocated
+011111101-1-----110011---------- Unallocated
+011111101-1-----110101---------- FABD	<V><d>, <V><n>, <V><m>
+011111101-1-----111001---------- FCMGT	<V><d>, <V><n>, <V><m>
+011111101-1-----111011---------- FACGT	<V><d>, <V><n>, <V><m>
+011111101-1-----111101---------- Unallocated
+011111101-1-----111111---------- Unallocated
+
+01x111110xxxxxxxxxxxx1xxxxxxxxxx		Advanced SIMD scalar shift by immediate
+01x111111xxxxxxxxxxxx1xxxxxxxxxx		Unallocated
+01x11111xxxxxxxxxxxxx0xxxxxxxxxx		Advanced SIMD scalar x indexed element
+0x001110xx0xxxxx0xxx00xxxxxxxxxx		Advanced SIMD table lookup
+0x001110xx0xxxxx0xxx10xxxxxxxxxx		Advanced SIMD permute
+0x001110xx0xxxxx0xxxx1xxxxxxxxxx		Advanced SIMD extract
+
+0xx01110000xxxxx0xxxx1xxxxxxxxxx		Advanced SIMD copy
+0--01110000-00000----1---------- Unallocated
+0-001110000-----000001---------- DUP	<V><d>, <Vn>.<T>[<index>]
+0-001110000-----000011---------- DUP	<Vd>.<T>, <R><n>
+0-001110000-----000101---------- Unallocated
+0-001110000-----001001---------- Unallocated
+0-001110000-----001101---------- Unallocated
+0-001110000-----01---1---------- Unallocated
+00001110000-----000111---------- Unallocated
+00001110000-----001011---------- SMOV	<Wd>, <Vn>.<Ts>[<index>]
+00001110000-----001111---------- UMOV	<Wd>, <Vn>.<Ts>[<index>]
+				 MOV	<Wd>, <Vn>.S[<index>]
+00101110000-----0----1---------- Unallocated
+01001110000-----000111---------- INS	<Vd>.<Ts>[<index>], <R><n>
+				 MOV	<Vd>.<Ts>[<index>], <R><n>
+01001110000-----001011---------- SMOV	<Xd>, <Vn>.<Ts>[<index>]
+01001110000-1000001111---------- UMOV	<Xd>, <Vn>.<Ts>[<index>]
+				 MOV	<Xd>, <Vn>.D[<index>]
+01101110000-----0----1---------- INS	<Vd>.<Ts>[<index1>], <Vn>.<Ts>[<index2>]
+				 MOV	<Vd>.<Ts>[<index1>], <Vn>.<Ts>[<index2>]
+
+0xx011101x0xxxxx0xxxx1xxxxxxxxxx		Unallocated
+0xx01110x011100xxxxx10xxxxxxxxxx		Unallocated
+0xx01110x10xxxxx01xxx1xxxxxxxxxx		Unallocated
+0xx01110xx0xxxxx1xxxxxxxxxxxxxxx		Unallocated
+
+0xx01110xx10000xxxxx10xxxxxxxxxx		Advanced SIMD two-register miscellaneous
+0--01110--100001000-10---------- Unallocated
+0--01110--100001010110---------- Unallocated
+0--01110--100001111010---------- Unallocated
+0--011100-10000011--10---------- Unallocated
+0--011100-100001111110---------- Unallocated
+0--011101-100001011010---------- Unallocated
+0--011101-100001011110---------- Unallocated
+0-001110--100000000010---------- REV64	<Vd>.<T>, <Vn>.<T>
+0-001110--100000000110---------- REV16	<Vd>.<T>, <Vn>.<T>
+0-001110--100000001010---------- SADDLP	<Vd>.<Ta>, <Vn>.<Tb>
+0-001110--100000001110---------- SUQADD	<Vd>.<T>, <Vn>.<T>
+0-001110--100000010010---------- CLS	<Vd>.<T>, <Vn>.<T>
+0-001110--100000010110---------- CNT	<Vd>.<T>, <Vn>.<T>
+0-001110--100000011010---------- SADALP	<Vd>.<Ta>, <Vn>.<Tb>
+0-001110--100000011110---------- SQABS	<Vd>.<T>, <Vn>.<T>
+0-001110--100000100010---------- CMGT	<Vd>.<T>, <Vn>.<T>, #0
+0-001110--100000100110---------- CMEQ	<Vd>.<T>, <Vn>.<T>, #0
+0-001110--100000101010---------- CMLT	<Vd>.<T>, <Vn>.<T>, #0
+0-001110--100000101110---------- ABS	<Vd>.<T>, <Vn>.<T>
+0-001110--100001001010---------- XNT	<Vd>.<Tb>, <Vn>.<Ta>
+				 XNT2	<Vd>.<Tb>, <Vn>.<Ta>
+0-001110--100001001110---------- Unallocated
+0-001110--100001010010---------- SQXTN	<Vd>.<Tb>, <Vn>.<Ta>
+				 SQXTN2	<Vd>.<Tb>, <Vn>.<Ta>
+0-0011100-100001011010---------- FCVTN	<Vd>.<Tb>, <Vn>.<Ta>
+				 FCVTN2	<Vd>.<Tb>, <Vn>.<Ta>
+0-0011100-100001011110---------- FCVTL	<Vd>.<Ta>, <Vn>.<Tb>
+				 FCVTL2	<Vd>.<Ta>, <Vn>.<Tb>
+0-0011100-100001100010---------- FRINTN	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001100110---------- FRINTM	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001101010---------- FCVTNS	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001101110---------- FCVTMS	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001110010---------- FCVTAS	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001110110---------- SCVTF	<Vd>.<T>, <Vn>.<T>
+0-0011101-100000110010---------- FCMGT	<Vd>.<T>, <Vn>.<T>, #0.0
+0-0011101-100000110110---------- FCMEQ	<Vd>.<T>, <Vn>.<T>, #0.0
+0-0011101-100000111010---------- FCMLT	<Vd>.<T>, <Vn>.<T>, #0.0
+0-0011101-100000111110---------- FABS	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001100010---------- FRINTP	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001100110---------- FRINTZ	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001101010---------- FCVTPS	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001101110---------- FCVTZS	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001110010---------- URECPE <Vd>.<T>, <Vn>.<T>
+0-0011101-100001110110---------- FRECPE	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001111110---------- Unallocated
+0-101110--100000000010---------- REV32	<Vd>.<T>, <Vn>.<T>
+0-101110--100000000110---------- Unallocated
+0-101110--100000001010---------- UADDLP	<Vd>.<Ta>, <Vn>.<Tb>
+0-101110--100000001110---------- USQADD	<Vd>.<T>, <Vn>.<T>
+0-101110--100000010010---------- CLZ	<Vd>.<T>, <Vn>.<T>
+0-101110--100000011010---------- UADALP	<Vd>.<Ta>, <Vn>.<Tb>
+0-101110--100000011110---------- SQNEG	<Vd>.<T>, <Vn>.<T>
+0-101110--100000100010---------- CMGE	<Vd>.<T>, <Vn>.<T>, #0
+0-101110--100000100110---------- CMLE	<Vd>.<T>, <Vn>.<T>, #0
+0-101110--100000101010---------- Unallocated
+0-101110--100000101110---------- NEG	<Vd>.<T>, <Vn>.<T>
+0-101110--100001001010---------- SQXTUN	<Vd>.<Tb>, <Vn>.<Ta>
+				 SQXTUN2	<Vd>.<Tb>, <Vn>.<Ta>
+0-101110--100001001110---------- SHLL	<Vd>.<Ta>, <Vn>.<Tb>, #<shift>
+				 SHLL2	<Vd>.<Ta>, <Vn>.<Tb>, #<shift>
+0-101110--100001010010---------- UQXTN	<Vd>.<Tb>, <Vn>.<Ta>
+				 UQXTN2	<Vd>.<Tb>, <Vn>.<Ta>
+0-1011100-100001011010---------- FCVTXN	<Vd>.<Tb>, <Vn>.<Ta>
+				 FCVTXN2	<Vd>.<Tb>, <Vn>.<Ta>
+0-1011100-100001011110---------- Unallocated
+0-1011100-100001100010---------- FRINTA	<Vd>.<T>, <Vn>.<T>
+0-1011100-100001100110---------- FRINTX	<Vd>.<T>, <Vn>.<T>
+0-1011100-100001101010---------- FCVTNU	<Vd>.<T>, <Vn>.<T>
+0-1011100-100001101110---------- FCVTMU	<Vd>.<T>, <Vn>.<T>
+0-1011100-100001110010---------- FCVTAU	<Vd>.<T>, <Vn>.<T>
+0-1011100-100001110110---------- UCVTF	<Vd>.<T>, <Vn>.<T>
+0-10111000100000010110---------- NOT	<Vd>.<T>, <Vn>.<T>
+				 MVN	<Vd>.<T>, <Vn>.<T>
+0-10111001100000010110---------- RBIT	<Vd>.<T>, <Vn>.<T>
+0-1011101-100000010110---------- Unallocated
+0-1011101-100000110010---------- FCMGE	<Vd>.<T>, <Vn>.<T>, #0.0
+0-1011101-100000110110---------- FCMLE	<Vd>.<T>, <Vn>.<T>, #0.0
+0-1011101-100000111010---------- Unallocated
+0-1011101-100000111110---------- FNEG	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001100010---------- Unallocated
+0-1011101-100001100110---------- FRINTI	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001101010---------- FCVTPU	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001101110---------- FCVTZU	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001110010---------- URSQRTE	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001110110---------- FRSQRTE	<Vd>.<T>, <Vn>.<T>
+0-1011101-100001111110---------- FSQRT	<Vd>.<T>, <Vn>.<T>
+
+0xx01110xx11000xxxxx10xxxxxxxxxx		Advanced SIMD across lanes
+0xx01110xx1xx1xxxxxx10xxxxxxxxxx		Unallocated
+0xx01110xx1xxx1xxxxx10xxxxxxxxxx		Unallocated
+0xx01110xx1xxxxxxxxx00xxxxxxxxxx		Advanced SIMD three different
+
+0xx01110xx1xxxxxxxxxx1xxxxxxxxxx		Advanced SIMD three same
+0-001110--1-----000001---------- SHADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----000011---------- SQADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----000101---------- SRHADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----001001---------- SHSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----001011---------- SQSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----001101---------- CMGT	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----001111---------- CMGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----010001---------- SSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----010011---------- SQSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----010101---------- SRSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----010111---------- SQRSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----011001---------- SMAX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----011011---------- SMIN	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----011101---------- SABD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----011111---------- SABA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----100001---------- ADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----100011---------- CMTST	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----100101---------- MLA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----100111---------- MUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----101001---------- SMAXP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----101011---------- SMINP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----101101---------- SQDMULH	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110--1-----101111---------- ADDP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----110001---------- FMAXNM	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----110011---------- FMLA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----110101---------- FADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----110111---------- FMULX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----111001---------- FCMEQ	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----111011---------- Unallocated
+0-0011100-1-----111101---------- FMAX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----111111---------- FRECPS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110001-----000111---------- AND	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110011-----000111---------- BIC	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----110001---------- FMINNM	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----110011---------- FMLS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----110101---------- FSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----110111---------- Unallocated
+0-0011101-1-----111001---------- Unallocated
+0-0011101-1-----111011---------- Unallocated
+0-0011101-1-----111101---------- FMIN	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----111111---------- FRSQRTS	  <Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110101-----000111---------- ORR	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+				 MOV	<Vd>.<T>, <Vn>.<T>
+0-001110111-----000111---------- ORN	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----000001---------- UHADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----000011---------- UQADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----000101---------- URHADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----001001---------- UHSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----001011---------- UQSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----001101---------- CMHI	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----001111---------- CMHS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----010001---------- USHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----010011---------- UQSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----010101---------- URSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----010111---------- UQRSHL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----011001---------- UMAX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----011011---------- UMIN	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----011101---------- UABD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----011111---------- UABA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----100001---------- SUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----100011---------- CMEQ	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----100101---------- MLS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----100111---------- PMUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----101001---------- UMAXP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----101011---------- UMINP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----101101---------- SQRDMULH	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----101111---------- Unallocated
+0-1011100-1-----110001---------- FMAXNMP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----110011---------- Unallocated
+0-1011100-1-----110101---------- FADDP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----110111---------- FMUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----111001---------- FCMGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----111011---------- FACGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----111101---------- FMAXP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----111111---------- FDIV	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110001-----000111---------- EOR	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110011-----000111---------- BSL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----110001---------- FMINNMP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----110011---------- Unallocated
+0-1011101-1-----110101---------- FABD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----110111---------- Unallocated
+0-1011101-1-----111001---------- FCMGT	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----111011---------- FACGT	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----111101---------- FMINP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011101-1-----111111---------- Unallocated
+0-101110101-----000111---------- BIT	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110111-----000111---------- BIF	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+
+0xx0111100000xxxxxxxx1xxxxxxxxxx		Advanced SIMD modified immediate
+0xx011110xxxxxxxxxxxx1xxxxxxxxxx		Advanced SIMD shift by immediate
+0xx011111xxxxxxxxxxxx1xxxxxxxxxx		Unallocated
+0xx01111xxxxxxxxxxxxx0xxxxxxxxxx		Advanced SIMD vector x indexed element
+11x1111xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+1xx0111xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+x0x11110xx0xxxxxxxxxxxxxxxxxxxxx		Conversion between floating-point and fixed-point
+
+x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
+-0-11110--1-101-000000---------- Unallocated
+-0-11110--1-110-000000---------- Unallocated
+-0-11110--11-01-000000---------- Unallocated
+-0-11110--11-10-000000---------- Unallocated
+-0011110101--0--000000---------- Unallocated
+-0011110101--10-000000---------- Unallocated
+-0111110--1-----000000---------- Unallocated
+00011110001-111-000000---------- Unallocated
+0001111000100000000000---------- FCVTNS	<Wd>, <Sn>
+0001111000100001000000---------- FCVTNU	<Wd>, <Sn>
+0001111000100010000000---------- SCVTF	<Sd>, <Wn>
+0001111000100011000000---------- UCVTF	<Sd>, <Wn>
+0001111000100100000000---------- FCVTAS	<Wd>, <Sn>
+0001111000100101000000---------- FCVTAU	<Wd>, <Sn>
+0001111000100110000000---------- FMOV	<Wd>, <Sn>
+0001111000100111000000---------- FMOV	<Sd>, <Wn>
+0001111000101000000000---------- FCVTPS	<Wd>, <Sn>
+0001111000101001000000---------- FCVTPU	<Wd>, <Sn>
+000111100011-11-000000---------- Unallocated
+0001111000110000000000---------- FCVTMS	<Wd>, <Sn>
+0001111000110001000000---------- FCVTMU	<Wd>, <Sn>
+0001111000111000000000---------- FCVTZS	<Wd>, <Sn>
+0001111000111001000000---------- FCVTZU	<Wd>, <Sn>
+00011110011--11-000000---------- Unallocated
+0001111001100000000000---------- FCVTNS	<Wd>, <Dn>
+0001111001100001000000---------- FCVTNU	<Wd>, <Dn>
+0001111001100010000000---------- SCVTF	<Dd>, <Wn>
+0001111001100011000000---------- UCVTF	<Dd>, <Wn>
+0001111001100100000000---------- FCVTAS	<Wd>, <Dn>
+0001111001100101000000---------- FCVTAU	<Wd>, <Dn>
+0001111001101000000000---------- FCVTPS	<Wd>, <Dn>
+0001111001101001000000---------- FCVTPU	<Wd>, <Dn>
+0001111001110000000000---------- FCVTMS	<Wd>, <Dn>
+0001111001110001000000---------- FCVTMU	<Wd>, <Dn>
+0001111001111000000000---------- FCVTZS	<Wd>, <Dn>
+0001111001111001000000---------- FCVTZU	<Wd>, <Dn>
+00011110101--11-000000---------- Unallocated
+10011110001--11-000000---------- Unallocated
+1001111000100000000000---------- FCVTNS	<Xd>, <Sn>
+1001111000100001000000---------- FCVTNU	<Xd>, <Sn>
+1001111000100010000000---------- SCVTF	<Sd>, <Xn>
+1001111000100011000000---------- UCVTF	<Sd>, <Xn>
+1001111000100100000000---------- FCVTAS	<Xd>, <Sn>
+1001111000100101000000---------- FCVTAU	<Xd>, <Sn>
+1001111000101000000000---------- FCVTPS	<Xd>, <Sn>
+1001111000101001000000---------- FCVTPU	<Xd>, <Sn>
+1001111000110000000000---------- FCVTMS	<Xd>, <Sn>
+1001111000110001000000---------- FCVTMU	<Xd>, <Sn>
+1001111000111000000000---------- FCVTZS	<Xd>, <Sn>
+1001111000111001000000---------- FCVTZU	<Xd>, <Sn>
+10011110011-111-000000---------- Unallocated
+1001111001100000000000---------- FCVTNS	<Xd>, <Dn>
+1001111001100001000000---------- FCVTNU	<Xd>, <Dn>
+1001111001100010000000---------- SCVTF	<Dd>, <Xn>
+1001111001100011000000---------- UCVTF	<Dd>, <Xn>
+1001111001100100000000---------- FCVTAS	<Xd>, <Dn>
+1001111001100101000000---------- FCVTAU	<Xd>, <Dn>
+1001111001100110000000---------- FMOV	<Xd>, <Dn>
+1001111001100111000000---------- FMOV	<Dd>, <Xn>
+1001111001101000000000---------- FCVTPS	<Xd>, <Dn>
+1001111001101001000000---------- FCVTPU	<Xd>, <Dn>
+100111100111-11-000000---------- Unallocated
+1001111001110000000000---------- FCVTMS	<Xd>, <Dn>
+1001111001110001000000---------- FCVTMU	<Xd>, <Dn>
+1001111001111000000000---------- FCVTZS	<Xd>, <Dn>
+1001111001111001000000---------- FCVTZU	<Xd>, <Dn>
+10011110101-011-000000---------- Unallocated
+1001111010101110000000---------- FMOV	<Xd>, <Vn>.D[1]
+1001111010101111000000---------- FMOV	<Vd>.D[1], <Xn>
+100111101011-11-000000---------- Unallocated
+
+x0x11110xx1xxxxx100000xxxxxxxxxx		Unallocated
+
+x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
+-0-11110--1-1----10000---------- Unallocated
+-0-11110--11-----10000---------- Unallocated
+-0111110--1------10000---------- Unallocated
+0001111000100000010000---------- FMOV	<Sd>, <Sn>
+0001111000100000110000---------- FABS	<Sd>, <Sn>
+0001111000100001010000---------- FNEG	<Sd>, <Sn>
+0001111000100001110000---------- FSQRT	<Sd>, <Sn>
+0001111000100010010000---------- Unallocated
+0001111000100010110000---------- FCVT	<Dd>, <Sn>
+0001111000100011010000---------- Unallocated
+0001111000100011110000---------- FCVT	<Hd>, <Sn>
+0001111000100100010000---------- FRINTN	<Sd>, <Sn>
+0001111000100100110000---------- FRINTP	<Sd>, <Sn>
+0001111000100101010000---------- FRINTM	<Sd>, <Sn>
+0001111000100101110000---------- FRINTZ	<Sd>, <Sn>
+0001111000100110010000---------- FRINTA	<Sd>, <Sn>
+0001111000100110110000---------- Unallocated
+0001111000100111010000---------- FRINTX	<Sd>, <Sn>
+0001111000100111110000---------- FRINTI	<Sd>, <Sn>
+0001111001100000010000---------- FMOV	<Dd>, <Dn>
+0001111001100000110000---------- FABS	<Dd>, <Dn>
+0001111001100001010000---------- FNEG	<Dd>, <Dn>
+0001111001100001110000---------- FSQRT	<Dd>, <Dn>
+0001111001100010010000---------- FCVT	<Sd>, <Dn>
+0001111001100010110000---------- Unallocated
+0001111001100011010000---------- Unallocated
+0001111001100011110000---------- FCVT	<Hd>, <Dn>
+0001111001100100010000---------- FRINTN	<Dd>, <Dn>
+0001111001100100110000---------- FRINTP	<Dd>, <Dn>
+0001111001100101010000---------- FRINTM	<Dd>, <Dn>
+0001111001100101110000---------- FRINTZ	<Dd>, <Dn>
+0001111001100110010000---------- FRINTA	<Dd>, <Dn>
+0001111001100110110000---------- Unallocated
+0001111001100111010000---------- FRINTX	<Dd>, <Dn>
+0001111001100111110000---------- FRINTI	<Dd>, <Dn>
+0001111010100----10000---------- Unallocated
+0001111011100010010000---------- FCVT	<Sd>, <Hn>
+0001111011100010110000---------- FCVT	<Dd>, <Hn>
+0001111011100011-10000---------- Unallocated
+0001111011100110110000---------- Unallocated
+10-11110--1------10000---------- Unallocated
+
+x0x11110xx1xxxxxxx1000xxxxxxxxxx		Floating-point compare
+-0-11110--1-------1000---------1 Unallocated
+-0-11110--1-------1000--------1- Unallocated
+-0-11110--1-------1000-------1-- Unallocated
+-0-11110--1------11000---------- Unallocated
+-0-11110--1-----1-1000---------- Unallocated
+-0-11110101-------1000---------- Unallocated
+-0111110--1-------1000---------- Unallocated
+00011110001-----001000-----00000 FCMP	<Sn>, <Sm>
+00011110001-----001000-----01000 FCMP	<Sn>, #0.0
+00011110001-----001000-----10000 FCMPE	<Sn>, <Sm>
+00011110001-----001000-----11000 FCMPE	<Sn>, #0.0
+00011110011-----001000-----00000 FCMP	<Dn>, <Dm>
+00011110011-----001000-----01000 FCMP	<Dn>, #0.0
+00011110011-----001000-----10000 FCMPE	<Dn>, <Dm>
+00011110011-----001000-----11000 FCMPE	<Dn>, #0.0
+10-11110--1-------1000---------- Unallocated
+
+x0x11110xx1xxxxxxxx100xxxxxxxxxx		Floating-point immediate
+-0-11110--1--------100----1----- Unallocated
+-0-11110--1--------100---1------ Unallocated
+-0-11110--1--------100--1------- Unallocated
+-0-11110--1--------100-1-------- Unallocated
+-0-11110--1--------1001--------- Unallocated
+-0-11110101--------100---------- Unallocated
+-0111110--1--------100---------- Unallocated
+00011110001--------10000000----- FMOV	<Sd>, #<imm>
+00011110011--------10000000----- FMOV	<Sd>, #<imm>
+10-11110--1--------100---------- Unallocated
+
+x0x11110xx1xxxxxxxxx01xxxxxxxxxx		Floating-point conditional compare
+
+x0x11110xx1xxxxxxxxx10xxxxxxxxxx		Floating-point data-processing (2 source)
+-0-11110--1-----1--110---------- Unallocated
+-0-11110--1-----1-1-10---------- Unallocated
+-0-11110--1-----11--10---------- Unallocated
+-0-11110101---------10---------- Unallocated
+-0111110--1---------10---------- Unallocated
+00011110001-----000010---------- FMUL	<Sd>, <Sn>, <Sm>
+00011110001-----000110---------- FDIV	<Sd>, <Sn>, <Sm>
+00011110001-----001010---------- FADD	<Sd>, <Sn>, <Sm>
+00011110001-----001110---------- FSUB	<Sd>, <Sn>, <Sm>
+00011110001-----010010---------- FMAX	<Sd>, <Sn>, <Sm>
+00011110001-----010110---------- FMIN	<Sd>, <Sn>, <Sm>
+00011110001-----011010---------- FMAXNM	<Sd>, <Sn>, <Sm>
+00011110001-----011110---------- FMINNM	<Sd>, <Sn>, <Sm>
+00011110001-----100010---------- FNMUL	<Sd>, <Sn>, <Sm>
+00011110011-----000010---------- FMUL	<Dd>, <Dn>, <Dm>
+00011110011-----000110---------- FDIV	<Dd>, <Dn>, <Dm>
+00011110011-----001010---------- FADD	<Dd>, <Dn>, <Dm>
+00011110011-----001110---------- FSUB	<Dd>, <Dn>, <Dm>
+00011110011-----010010---------- FMAX	<Dd>, <Dn>, <Dm>
+00011110011-----010110---------- FMIN	<Dd>, <Dn>, <Dm>
+00011110011-----011010---------- FMAXNM	<Dd>, <Dn>, <Dm>
+00011110011-----011110---------- FMINNM	<Dd>, <Dn>, <Dm>
+00011110011-----100010---------- FNMUL	<Dd>, <Dn>, <Dm>
+10-11110--1---------10---------- Unallocated
+
+x0x11110xx1xxxxxxxxx11xxxxxxxxxx		Floating-point conditional select
+-0-11110101---------11---------- Unallocated
+-0111110--1---------11---------- Unallocated
+00011110001---------11---------- FCSEL	<Sd>, <Sn>, <Sm>, <cond>
+00011110011---------11---------- FCSEL	<Dd>, <Dn>, <Dm>, <cond>
+10-11110--1---------11---------- Unallocated
+
+x0x11111xxxxxxxxxxxxxxxxxxxxxxxx		Floating-point data-processing (3 source)
+-0-1111110---------------------- Unallocated
+-0111111------------------------ Unallocated
+00011111000-----0--------------- FMADD	<Sd>, <Sn>, <Sm>, <Sa>
+00011111000-----1--------------- FMSUB	<Sd>, <Sn>, <Sm>, <Sa>
+00011111001-----0--------------- FNMADD	<Sd>, <Sn>, <Sm>, <Sa>
+00011111001-----1--------------- FNMSUB	<Sd>, <Sn>, <Sm>, <Sa>
+00011111010-----0--------------- FMADD	<Dd>, <Dn>, <Dm>, <Da>
+00011111010-----1--------------- FMSUB	<Dd>, <Dn>, <Dm>, <Da>
+00011111011-----0--------------- FNMADD	<Dd>, <Dn>, <Dm>, <Da>
+00011111011-----1--------------- FNMSUB	<Dd>, <Dn>, <Dm>, <Da>
+10-11111------------------------ Unallocated

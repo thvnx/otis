@@ -1,6 +1,8 @@
 let usage_text = 
   "usage:\tcmd [options...] <asm_file>+\n"
 
+let isa_file = ref "./isa/armv8.isa"
+  
 let file:string ref = ref ""
 let breakpoint = ref "main"
 

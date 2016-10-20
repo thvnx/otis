@@ -1,7 +1,9 @@
 %{
     open Aarch64
-
+                           
     let instruction_table = Hashtbl.create 50000
+    let isa = Isa_reader.read_isa !Cmdline.isa_file
+    let trc = new Trace.trace isa
 %}
 
 %token <int64> HEXADDR IMMEDIATE_HEXA IMMEDIATE_DECIMAL
@@ -13,37 +15,37 @@
 %token <string> VECTOR_ELEMENT VECTOR_REGISTER
 %token <string> COMMENT
 %token COMMA PARAM_SEP
-%token EXCLAM
+%token EXCLAM COLON
 %token L_SQUARE R_SQUARE
 %token L_BRACE R_BRACE
 %token EOL EOF
 %token <(string * bool * int option)> LABEL
 
 %start trace
-%type <Trace.trace_instruction list> trace
+%type <Trace.trace> trace
 %type <parameter_t> instruction_parameter                                       
 
 %%
   
 	trace:
-	| l = line; EOF { [l] }
-	| l = line; t = trace { l::t }
+	| EOF { trc }
+	| line; t = trace { t }
 	;
 
 	line:
-        | pc = program_counter; ins = disassembled_instruction; COMMENT; EOL
-	| pc = program_counter; ins = disassembled_instruction; EOL {
+        | pc = program_counter; COLON; oc = HEXADDR; ins = disassembled_instruction; COMMENT; EOL
+	| pc = program_counter; COLON; oc = HEXADDR; ins = disassembled_instruction; EOL {
                                                                     let p = match pc with (ha, _) -> ha in
                                                                     let instr =
                                                                       try
                                                                         Hashtbl.find instruction_table p
                                                                       with
                                                                         Not_found ->
-                                                                        let i = new Trace.trace_instruction pc ins in
+                                                                        let i = new Trace.trace_instruction pc oc ins isa in
                                                                         Hashtbl.add instruction_table p i; i
                                                                     in
                                                                     instr#iter;
-                                                                    instr
+                                                                    trc#add_line instr
                                                                   }
 	;
 
@@ -58,7 +60,7 @@
 	;
 	
 	instruction_parameters:
-	| p = instruction_parameter; PARAM_SEP; ps = instruction_parameters { ps @ [p] }
+	| p = instruction_parameter; PARAM_SEP; ps = instruction_parameters { p :: ps }
         | p = instruction_parameter { [p] }
 	;
 
@@ -79,6 +81,7 @@
         | L_SQUARE; r1 = register; COMMA; r2 = register; COMMA; s = shift; R_SQUARE { Addressing (BaseRegisterOffsetReg (r1, r2, Some s)) }
         | L_SQUARE; r1 = register; COMMA; r2 = register; COMMA; e = extend; R_SQUARE { Addressing (BaseRegisterOffsetExt (r1, r2, e)) }
         | L_SQUARE; r = register; COMMA; i = immediate; R_SQUARE; EXCLAM { Addressing (PreIndexImm (r, i)) }
+        | L_SQUARE; r = register; R_SQUARE; PARAM_SEP; i = immediate (* hint for ld1 instruction which isn't well disassembled *)
         | L_SQUARE; r = register; R_SQUARE; COMMA; i = immediate { Addressing (PostIndexImm (r, i)) }
         | L_SQUARE; r = register; R_SQUARE { Addressing (BaseRegisterImm r) }
 	;

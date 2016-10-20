@@ -4,7 +4,7 @@
 # - _tags file introduces packages, pxp
 # - using *.mll and *.mly are handled automatically
 
-OCB_FLAGS = -use-ocamlfind -use-menhir -I src
+OCB_FLAGS = -use-ocamlfind -use-menhir -I isa -I src
 
 OCB = ocamlbuild $(OCB_FLAGS)
 

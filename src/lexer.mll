@@ -1,12 +1,11 @@
 {
   open Parser
   open Lexing
-  exception Eof
   exception SyntaxError of string
 }
 
 let hexa_number = "0x" ['0'-'9''a'-'f']+
-let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.']* | "resbuf.11899"
+let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.']*
 let instruction_name = ' ' ['.''a'-'z']+ '1'?
 let register_name = ['x''w''q''d''v''s']
 let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0"             
@@ -14,7 +13,7 @@ let integer = ['+''-']? ['0'-'9']+
 let shift = ("ls" ['r''l']) | "asr"
 let vector_register = '.' ("1"|"2"|"4"|"8"|"16") ['b''h''s''d']
 let vector_element = '.' ['b''h''s''d']
-let condition = "ne" | "eq" | "cs" | "cc" | "ls" | "hi" | "le" | "pl" | "lt" | "gt"
+let condition = "ne" | "eq" | "cs" | "cc" | "ls" | "hi" | "le" | "pl" | "lt" | "gt" | "mi"
 let extend = ['u''s'] "xt" ['b''h''w''x']
 let float = ['0'-'9'] '.' ['0'-'9']* ('e' integer)?
           
@@ -30,6 +29,7 @@ rule main =
   | '{' { L_BRACE }
   | '}' { R_BRACE }
   | '!' { EXCLAM }
+  | ':' { COLON }
   | '#' { immediate lexbuf }
 
   | "//" [^'\n']* as cmt
@@ -54,7 +54,7 @@ rule main =
                { (*Printf.printf "shift:%s\n" ls;*) SHIFT_N_ROTATE (ls) }
   | instruction_name as inn
                           { (*Printf.printf "instruction_name: %s\n" inn;*) INSTRUCTION_NAME (inn) }
-  | _ { raise (SyntaxError ("Illegal character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
+  | _ { raise (SyntaxError ("Illegal character")) }
   | eof { EOF }
 and immediate =
   parse
@@ -64,8 +64,8 @@ and immediate =
                  { (*Printf.printf "imm. integer: %s\n" i;*) IMMEDIATE_DECIMAL (Int64.of_string i) }
   | hexa_number as hn
                      { (*Printf.printf "imm. hexa_number: %s\n" hn;*) IMMEDIATE_HEXA (Int64.of_string hn) }
-  | _ { raise (SyntaxError ("Illegal immediate character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
-  | eof { raise (SyntaxError ("Immadiate is not terminated")) }
+  | _   { raise (SyntaxError ("Illegal character (immediate)")) }
+  | eof { raise (SyntaxError ("Immadiate isn't terminated")) }
 and label l =
   parse
   | function_name as fn
@@ -75,5 +75,5 @@ and label l =
   | ['0'-'9']* as i
                  { match l with (f, p, _) -> label (f, p, Some (int_of_string i)) lexbuf }
   | '>' { LABEL (l) }
-  | _ { raise (SyntaxError ("Illegal label character: " ^ Lexing.lexeme lexbuf ^ " at line " ^ (string_of_int lexbuf.lex_curr_p.pos_lnum))) }
-  | eof { raise (SyntaxError ("Label is not terminated")) }
+  | _ { raise   (SyntaxError ("Illegal character label")) }
+  | eof { raise (SyntaxError ("Label isn't terminated")) }
