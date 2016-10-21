@@ -191,13 +191,13 @@ object(self)
   method print =
     Printf.printf "%s[#i:%d, d:%d]\n" name (List.length trace2) self#depth
 
-  method print_trace =
+  method print_trace fd =
     let rec prt l =
       match l with
       | [] -> ()
       | (h, child)::t ->
-         print_endline h#to_string;
-         begin match child with None -> () | Some c -> c#print_trace end;
+         Printf.fprintf fd "%s\n" h#to_string;
+         begin match child with None -> () | Some c -> c#print_trace fd end;
          prt t
     in
     prt (List.rev trace2)
@@ -228,7 +228,7 @@ object(self)
         | Some f -> eu#issue_instruction i; (*printf "jump onto %s (#i:%d, d:%d)\n" f#get_name f#nb_instruction f#depth;*) f#exec
       ) (List.rev trace2)
     
-  method print_trace_fn =
+  method print_trace_fn fd =
     let rec prt l =
       match l with
       | [] -> ()
@@ -236,21 +236,21 @@ object(self)
          begin
            match child with
            | None -> ()
-           | Some c -> c#print_trace_fn;
+           | Some c -> c#print_trace_fn fd;
          end;
          prt t
     in
-    for i = 1 to self#depth do Printf.printf "-" done;
-    Printf.printf "> %s\n" name;
+    for i = 1 to self#depth do Printf.fprintf fd "-" done;
+    Printf.fprintf fd "> %s\n" name;
     prt (List.rev trace2)
 
-  method dot_trace source =
+  method dot_trace source fd =
     let nodes = ref [] in
     let add_node node =
       if not (List.mem node !nodes) then
         begin
           nodes := node :: !nodes;
-          Dot.node (node#get_code_str ^ (string_of_int self#get_id)) node#get_name
+          Printf.fprintf fd "%s\n" (Dot.node (node#get_code_str ^ (string_of_int self#get_id)) node#get_name)
         end
     in
     let relations = Hashtbl.create 0 in
@@ -274,18 +274,18 @@ object(self)
          add_relation s ins;
          match child with
          | None   -> dot t (Some (ins, self#get_id))
-         | Some c -> c#dot_trace (Some (ins, self#get_id));
+         | Some c -> c#dot_trace (Some (ins, self#get_id)) fd;
                      dot t (Some (c#last_instruction, c#get_id))
     in
-    Dot.open_subgraph (string_of_int self#get_id);
+    Printf.fprintf fd "%s\n" (Dot.open_subgraph (string_of_int self#get_id));
     dot (List.rev trace2) source;
     Hashtbl.iter (
-        fun (keysrc, keydst) (nb, (src, dst)) -> Dot.edge keysrc keydst (string_of_int nb)
+        fun (keysrc, keydst) (nb, (src, dst)) -> Printf.fprintf fd "%s\n" (Dot.edge keysrc keydst (string_of_int nb))
       ) relations;
-    Dot.close_subgraph name
+    Printf.fprintf fd "%s\n" (Dot.close_subgraph name)
   
     
-  method dot_trace_fn =
+  method dot_trace_fn fd =
     let rec dot l =
       match l with
       | [] -> ()
@@ -294,13 +294,21 @@ object(self)
            match child with
            | None -> ()
            | Some c ->
-              c#dot_trace_fn;
-              Printf.printf "\"%d\" -> \"%d\";\n" self#get_id c#get_id;
+              c#dot_trace_fn fd;
+              Printf.fprintf fd "%s\n" (Dot.edge (string_of_int self#get_id) (string_of_int c#get_id) "")
          end;
          dot t
     in
-    Printf.printf "\"%d\" [label=\"%s(%d)\"];\n" self#get_id name (List.length trace2);
-    dot (List.rev trace2)
+    (*let rec rank ?a l =
+      let acc = match a with None -> [] | Some aa -> aa in
+      match l with
+      | []             -> acc
+      | (_, None)::t   -> rank ~a:acc t
+      | (_, Some c)::t -> rank ~a:(((Printf.sprintf "\"%d\"" c#get_id)) :: acc) t
+    in*)
+    Printf.fprintf fd "%s\n" (Dot.node (string_of_int self#get_id) name);
+    dot (List.rev trace2);
+    (*Printf.fprintf fd "{ rank = same; %s }\n" (String.concat "; " (rank trace2))*)
     
 end;;
   
@@ -373,61 +381,70 @@ object(self)
     List.iter (
         fun i -> self#add_line i
       ) content *)
+
+  method find_breakpoint bp =
+    let (name, nb) =
+      if String.contains bp '(' then
+        (String.sub bp 0 (String.index bp '('),
+         (int_of_string (String.sub bp ((String.index bp '(')+1) ((String.length bp) - (String.index bp '(') - 2) ) - 1))
+      else (bp, 0)
+    in
+    let fltr = List.filter (fun i -> i#get_name = name) function_list in
+    match List.length fltr with
+    | 0 -> Printf.fprintf stderr "Error: can't set breakpoint (%s doesn't exist)\n" name;
+           raise Exit
+    | 1 -> List.hd fltr
+    | i -> if nb <> 0 then
+             begin
+               if nb < i then List.nth fltr nb
+               else begin
+                   Printf.fprintf stderr "Warning: %s was found %d times, but you are asking for the occurence #%d\n\
+                                          \treturning the first occurence instead\n" name i (nb+1);
+                   List.hd fltr
+                 end
+             end
+           else begin
+               Printf.fprintf stderr "Warning: %s was found %d times, returning the first occurence\n\
+                                      \ttry %s(n) for selecting the n-th occurence\n" name i name;
+               List.hd fltr
+             end
     
   method exec breakpoint =
-    let filtered = List.filter (fun i -> i#get_name = breakpoint) function_list in
-    (*List.iter (
-        fun i -> i#exec;
-                 i#get_exec_unit#print_instruction_counter
-      ) filtered*)
-    (List.hd filtered)#exec;
-    (List.hd filtered)#get_exec_unit#print_instruction_counter
+    let filtered = self#find_breakpoint breakpoint in
+    filtered#exec;
+    filtered#get_exec_unit#print_instruction_counter
 
   (*method print_isa = isa#print*)
     
   method print_nb_instruction name =
-    let filtered = List.filter (fun i -> i#get_name = name) function_list in
-    List.iter (
-        fun i ->
-        Printf.printf "%s: %d\n" name i#nb_instruction
-      ) filtered
+    Printf.printf "%s: %d\n" name (self#find_breakpoint name)#nb_instruction
+ 
     
   (** Print the function hierarchy *)
   method print_trace name =
-    let filtered = List.filter (fun i -> i#get_name = name) function_list in
-    List.iter (
-        fun i ->
-        i#print_trace
-      ) filtered
+    let fd = open_out (Cmdline.outfile "processed_trace") in
+    (self#find_breakpoint name)#print_trace fd;
+    close_out fd
   method print_trace_fn name =
-    let filtered = List.filter (fun i -> i#get_name = name) function_list in
-    List.iter (
-        fun i ->
-        i#print_trace_fn
-      ) filtered
+    let fd = open_out (Cmdline.outfile "cfg.txt") in
+    (self#find_breakpoint name)#print_trace_fn fd;
+    close_out fd
 
   method dot_trace name =
-    let filtered = List.filter (fun i -> i#get_name = name) function_list in
-    begin
-      match List.length filtered with
-      | 0 -> failwith ("breakpoint " ^ name ^ " was not found")
-      | i -> if i > 1 then failwith ("breakpoint " ^ name ^ " was found too many times (" ^ (string_of_int i) ^ ")")
-    end;
-    Printf.printf "digraph G {\n";
-    List.iter (
-        fun i ->
-        i#dot_trace None
-      ) filtered;
-    Printf.printf "}\n";
+    let fd = open_out (Cmdline.outfile "trc.dot") in
+    Printf.fprintf fd "%s\n" Dot.open_graph;
+    (self#find_breakpoint name)#dot_trace None fd;
+    Printf.fprintf fd "%s\n" Dot.close_graph;
+    close_out fd;
+    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.outfile "trc.dot") (Cmdline.outfile "trc.pdf")
   method dot_trace_fn name =
-    let filtered = List.filter (fun i -> i#get_name = name) function_list in
-    begin
-      match List.length filtered with
-      | 0 -> failwith ("breakpoint " ^ name ^ " was not found")
-      | i -> if i > 1 then failwith ("breakpoint " ^ name ^ " was found too many times (" ^ (string_of_int i) ^ ")")
-    end;
-    List.iter (
-        fun i ->
-        i#dot_trace_fn
-      ) filtered
+    let fd = open_out (Cmdline.outfile "cfg.dot") in
+    let filtered = self#find_breakpoint name in
+    Printf.fprintf fd "%s\n\
+                       node [shape=rectangle, style=rounded]\n\
+                       rankdir=LR\n" Dot.open_graph;
+    filtered#dot_trace_fn fd;   
+    Printf.fprintf fd "%s\n" Dot.close_graph;
+    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.outfile "cfg.dot") (Cmdline.outfile "cfg.pdf");
+    close_out fd
 end;;

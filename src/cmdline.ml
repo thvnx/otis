@@ -1,7 +1,7 @@
 let usage_text = 
   "usage:\tcmd [options...] <asm_file>+\n"
 
-let isa_file = ref "./isa/armv8.isa"
+let isa_file = ref (Filename.current_dir_name ^ "/isa/armv8.isa")
   
 let file:string ref = ref ""
 let breakpoint = ref "main"
@@ -34,3 +34,10 @@ let scan_cmd_line =
       exit 2;
     end
 ;;
+
+let outfile ext =
+  let bn = Filename.basename !file in
+  Printf.sprintf "%s.%s"
+                 (try  (Filename.chop_extension bn)
+                  with Invalid_argument _ -> bn)
+                 ext
