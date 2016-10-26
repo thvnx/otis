@@ -6,12 +6,12 @@ class trace_instruction pc oc ins (isa:Isa.instruction_set) =
   let (_fn, _plt, _off) = match _scope with None -> ("", false, None) | Some (Aarch64.Label s) -> (s) in
   let (_name, _params) = match ins with (n, p) -> (n, (match p with None -> [] | Some pp -> pp)) in
   let _str =
-    Printf.sprintf "0x%Lx%s:\t0x%08Lx %s%s"
+    Printf.sprintf "0x%Lx%s:\t0x%08Lx %s\t%s"
            _addr
            (match _scope with None -> "" | Some s -> " " ^ (Aarch64.label_to_string s))
            _opcode
            _name
-           ("\t" ^ (String.concat ", " (List.map (fun i -> Aarch64.parameter_to_string i) _params)))
+           (String.concat ", " (List.map (fun i -> Aarch64.parameter_to_string i) _params))
   in
   let _pattern = isa#pattern_of _name _opcode in
   let (_wparams, _rparams) =
@@ -95,7 +95,7 @@ object(self)
 
   val history = Hashtbl.create 0
   
-  method issue_instruction (instr:trace_instruction) =
+  method issue_instruction fd (instr:trace_instruction) =
     let update_history =
       try
         let h = Hashtbl.find history execution_cycle in
@@ -145,18 +145,16 @@ object(self)
 
     update_history;
     
-    Printf.printf "%6s, r: %12s, w: %8s\texecuted at cycle: %d/%d\n"
-                  instr#name
-                  (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#reads_param)))
-                  (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#writes_param)))
-                  execution_cycle execution_cycle_max
+    Printf.fprintf fd "%6s, r: %12s, w: %8s\texecuted at cycle: %d/%d\n"
+                   instr#name
+                   (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#reads_param)))
+                   (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#writes_param)))
+                   execution_cycle execution_cycle_max
     
-  method history_to_plot =
-    let fd = open_out "h.plot" in
+  method ilp_data fd =
     Hashtbl.iter (
         fun x y -> Printf.fprintf fd "%d %d\n" x (List.length y)
-      ) history;
-    close_out fd
+      ) history
 
   method print_instruction_counter =
     Hashtbl.iter (
@@ -164,8 +162,7 @@ object(self)
         Printf.printf "%s\t%d\n" x y
       ) instruction_counter;
     Printf.printf "total:\t%d (in %d cycles, namely %1.2f IPC)\n" instruction_issued execution_cycle
-                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle));
-    self#history_to_plot
+                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle))
 
 end ;;
   
@@ -177,6 +174,8 @@ object(self)
 
   val eu = match parent with None -> new execUnit | Some p -> p#get_exec_unit
 
+  method parent_name = match parent with None -> "no parent" | Some p -> p#get_name
+                                                            
   method get_name = name
   method get_id = (2*(Obj.magic self))
   method get_exec_unit = eu
@@ -220,29 +219,54 @@ object(self)
       None -> 0
     | Some p -> 1 + p#depth
 
-  method exec =
+  method exec fd =
     List.iter (
         fun (i, c) ->
         match c with
-          None -> eu#issue_instruction i
-        | Some f -> eu#issue_instruction i; (*printf "jump onto %s (#i:%d, d:%d)\n" f#get_name f#nb_instruction f#depth;*) f#exec
+          None   -> eu#issue_instruction fd i
+        | Some f -> eu#issue_instruction fd i; (*printf "jump onto %s (#i:%d, d:%d)\n" f#get_name f#nb_instruction f#depth;*)
+                    f#exec fd
       ) (List.rev trace2)
     
-  method print_trace_fn fd =
-    let rec prt l =
+  method print_trace_fn fd n =
+    let rec prt i l =
       match l with
       | [] -> ()
       | (_, child)::t ->
          begin
            match child with
            | None -> ()
-           | Some c -> c#print_trace_fn fd;
+           | Some c -> c#print_trace_fn fd i;
          end;
-         prt t
+         prt (i+1) t
     in
     for i = 1 to self#depth do Printf.fprintf fd "-" done;
-    Printf.fprintf fd "> %s\n" name;
-    prt (List.rev trace2)
+    Printf.fprintf fd "> %s; length:%d/%d%s\n" name (List.length trace2) (self#nb_instruction)
+                   (if n <> 0 then (Printf.sprintf " parent:%s begin:%d" self#parent_name n) else "");
+    prt 1 (List.rev trace2)
+
+
+  method tikz_trace fd n scale =
+    let scaling x =
+      (float_of_int (x * 100)) /. (float_of_int scale)
+    in
+    let rec prt i l =
+      match l with
+      | []            -> ()
+      | (_, child)::t ->
+         begin
+           match child with
+           | None   -> prt (i+1) t
+           | Some c -> c#tikz_trace fd i scale; prt (i+c#nb_instruction+1) t
+         end;
+         
+    in
+    
+    Printf.fprintf fd "\\draw[mynode, fill=blue!%d] (%f,%d) rectangle (%f,%d) node[midway] {%s};\n"
+                   (self#depth*10) (scaling n) self#depth (scaling (n + self#nb_instruction)) (self#depth + 1) (Str.global_replace (Str.regexp "_") "\\_" name)
+    ;
+   
+    prt n (List.rev trace2)
 
   method dot_trace source fd =
     let nodes = ref [] in
@@ -387,14 +411,14 @@ object(self)
       if String.contains bp '(' then
         (String.sub bp 0 (String.index bp '('),
          (int_of_string (String.sub bp ((String.index bp '(')+1) ((String.length bp) - (String.index bp '(') - 2) ) - 1))
-      else (bp, 0)
+      else (bp, -1)
     in
     let fltr = List.filter (fun i -> i#get_name = name) function_list in
     match List.length fltr with
     | 0 -> Printf.fprintf stderr "Error: can't set breakpoint (%s doesn't exist)\n" name;
            raise Exit
     | 1 -> List.hd fltr
-    | i -> if nb <> 0 then
+    | i -> if nb >= 0 then
              begin
                if nb < i then List.nth fltr nb
                else begin
@@ -410,9 +434,14 @@ object(self)
              end
     
   method exec breakpoint =
+    let fd = open_out (Cmdline.outfile "analysis.dump") in
     let filtered = self#find_breakpoint breakpoint in
-    filtered#exec;
-    filtered#get_exec_unit#print_instruction_counter
+    filtered#exec fd;
+    filtered#get_exec_unit#print_instruction_counter;
+    close_out fd;
+    let fd = open_out (Cmdline.outfile "ilp.data") in
+    filtered#get_exec_unit#ilp_data fd;
+    close_out fd;
 
   (*method print_isa = isa#print*)
     
@@ -427,12 +456,24 @@ object(self)
     close_out fd
   method print_trace_fn name =
     let fd = open_out (Cmdline.outfile "cfg.txt") in
-    (self#find_breakpoint name)#print_trace_fn fd;
+    (self#find_breakpoint name)#print_trace_fn fd 0;
+    close_out fd
+
+  method tikz_trace name =
+    let fd = open_out (Cmdline.outfile "rg.tex") in
+    Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
+                       \\tikzset{mynode/.append style={draw=none, rounded corners=1pt}}\n\
+                       \\begin{document}\n\
+                       \\begin{tikzpicture}[x=15pt, y=10pt, font=\\small]\n";
+    (self#find_breakpoint name)#tikz_trace fd 1 (self#find_breakpoint name)#nb_instruction;
+    Printf.fprintf fd "\\end{tikzpicture}\n\
+                       \\end{document}";
     close_out fd
 
   method dot_trace name =
     let fd = open_out (Cmdline.outfile "trc.dot") in
-    Printf.fprintf fd "%s\n" Dot.open_graph;
+    Printf.fprintf fd "%s\n\
+                       node [shape=rectangle, style=rounded]\n" Dot.open_graph;
     (self#find_breakpoint name)#dot_trace None fd;
     Printf.fprintf fd "%s\n" Dot.close_graph;
     close_out fd;
@@ -441,8 +482,7 @@ object(self)
     let fd = open_out (Cmdline.outfile "cfg.dot") in
     let filtered = self#find_breakpoint name in
     Printf.fprintf fd "%s\n\
-                       node [shape=rectangle, style=rounded]\n\
-                       rankdir=LR\n" Dot.open_graph;
+                       node [shape=rectangle, style=rounded]\n" Dot.open_graph;
     filtered#dot_trace_fn fd;   
     Printf.fprintf fd "%s\n" Dot.close_graph;
     Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.outfile "cfg.dot") (Cmdline.outfile "cfg.pdf");

@@ -32,6 +32,7 @@ let _ =
   if !Cmdline.cfg_graphviz then trace#dot_trace_fn !Cmdline.breakpoint;
   if !Cmdline.trace_graphviz then trace#dot_trace !Cmdline.breakpoint;
   if !Cmdline.cfg_text then trace#print_trace_fn !Cmdline.breakpoint;
+  if !Cmdline.cfg_tikz then trace#tikz_trace !Cmdline.breakpoint;
   if !Cmdline.trace_text then trace#print_trace !Cmdline.breakpoint;
   
   if !Cmdline.nb_instruction then trace#print_nb_instruction !Cmdline.breakpoint;

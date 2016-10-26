@@ -13,7 +13,7 @@ let integer = ['+''-']? ['0'-'9']+
 let shift = ("ls" ['r''l']) | "asr"
 let vector_register = '.' ("1"|"2"|"4"|"8"|"16") ['b''h''s''d']
 let vector_element = '.' ['b''h''s''d']
-let condition = "ne" | "eq" | "cs" | "cc" | "ls" | "hi" | "le" | "pl" | "lt" | "gt" | "mi"
+let condition = "ne" | "eq" | "cs" | "cc" | "ls" | "hi" | "le" | "pl" | "lt" | "gt" | "mi" | "ge"
 let extend = ['u''s'] "xt" ['b''h''w''x']
 let float = ['0'-'9'] '.' ['0'-'9']* ('e' integer)?
           

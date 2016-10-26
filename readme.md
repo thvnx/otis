@@ -1,1 +1,2 @@
-# AArch64 Trace Based Performance Analyser
+# Trace-Based Performance Analyser
+

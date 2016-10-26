@@ -1,7 +1,7 @@
 let usage_text = 
   "usage:\tcmd [options...] <asm_file>+\n"
 
-let isa_file = ref (Filename.current_dir_name ^ "/isa/armv8.isa")
+let isa_file = ref ("/Users/ltheveno/workspace/atbpa/isa/armv8.isa")
   
 let file:string ref = ref ""
 let breakpoint = ref "main"
@@ -11,6 +11,7 @@ let nb_instruction = ref false
          
 let cfg_graphviz = ref false
 let cfg_text = ref false
+let cfg_tikz = ref false
 let trace_text = ref false
 let trace_graphviz = ref false
 
@@ -23,6 +24,7 @@ let scan_cmd_line =
         ("-nbi", Arg.Set nb_instruction , " show the number of instruction");
         ("-cfg-graphviz", Arg.Set cfg_graphviz , " Output graphviz graph");
         ("-cfg-text", Arg.Set cfg_text , " Output text graph");
+        ("-cfg-tikz", Arg.Set cfg_tikz , " Output tikz graph");
         ("-trace", Arg.Set trace_text , " Output trace");
         ("-trace-graphviz", Arg.Set trace_graphviz , " Output trace graph");
       ]
