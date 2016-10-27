@@ -1,2 +1,2 @@
-# Trace-Based Performance Analyser
-
+# Otis: a trace-based performance analyser
+
