@@ -62,12 +62,12 @@ object
     let diff m p =
       let len = String.length m in
       let res = sub_int code (32 - p) len in
-      Printf.printf "%32s? %08Lx <> %08Lx\n" "" res (Int64.of_string ("0b" ^ m));
+      (*Printf.printf "%32s? %08Lx <> %08Lx\n" "" res (Int64.of_string ("0b" ^ m));*)
       res <> (Int64.of_string ("0b" ^ m))
     in
     (** [mch p_code pos] checks the adequacy of [p_code] (the pattern's opcode) and [code] (the instruction opcode). *)
     let rec mch p_code pos =
-      Printf.printf "%32s [%c=%d] at %d\n" p_code (String.get _opcode pos) (Int64.to_int (Int64.shift_right code (31 - pos)) mod 2) pos;
+      (*Printf.printf "%32s [%c=%d] at %d\n" p_code (String.get _opcode pos) (Int64.to_int (Int64.shift_right code (31 - pos)) mod 2) pos;*)
       if pos < 31 then begin (* 32 bits length *)
         match String.get p_code 0 with
         | '0' -> (* continue if bit at position pos = 0 *)
@@ -86,7 +86,7 @@ object
         end
       else true (* pos = 32, all the bits of the instruction match the pattern *)
     in
-    Printf.printf "%s (%s) %08Lx\n" _opcode _name code; 
+    (*Printf.printf "%s (%s) %08Lx\n" _opcode _name code; *)
     mch _opcode 0 (* start matching at pos 0 *)
 
                 
