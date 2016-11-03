@@ -8,9 +8,9 @@
 }
 
 let destination = (['W''X''S''D''Q''B''H'] 'd') | (('V' "><"? ['d''b'] '>') (".<T"('>'|"s>[<index" ['1''2']? ">]"))?)
-let source = ['W''X''S''D''Q''B''H'] ['n''m''s''a'] | (('V' "><"? ['n''m''a'] '>') (".<T"('>'|"s>[<index" ['1''2']? ">]"))?) | "R><n"
+let source = ['W''X''S''D''Q''B''H'] ['n''m''s''a'] | (('V' "><"? ['n''m''a'] '>') (".<T"('>'|"s>[<index" ['1''2']? ">]"))?) | "R><"['n''m']
 let transfert_or_test = ['W''X''S''D''Q''B''H'] 't'
-let immediate = "label" | "imm" ['r''s']? | "lsb" | "width" | "pstatefield" | "cond" | "option" | "systemreg" | "shift" | "prfop"
+let immediate = "label" | "imm" ['r''s']? | "lsb" | "width" | "pstatefield" | "cond" | "option" | "systemreg" | "shift" | "prfop" | "extend" | "amount" 
 
 rule main =
   parse
@@ -23,7 +23,8 @@ rule main =
   | '<' { value lexbuf }
   | [','] { main lexbuf }
 
-  | '#' [^',''\n''{']* { IMM }
+  | '#' [^',''\n''{']*
+  | "MSL" [^',''\n''{']* { IMM }
   | "{, "|'{' { value_option lexbuf }
   | '[' [^'\n']* { BASE }
   | "{ " { vector lexbuf }
@@ -55,8 +56,8 @@ and value =
 and value_option =
   parse
   | '<' source [^',''\n''{']* { OPT_READ }
-  | "LSL #<" immediate [^',''\n''{']* 
-  | '#'? '<' immediate [^',''\n''{']* { OPT_IMM }
+  | "LSL #<" immediate [^',''\n''{']* | "LSL #0" [^',''\n''{']*
+  | '#'? '<' immediate [^',''\n']* { OPT_IMM }
   | _   { raise (SyntaxError ("Illegal character (value_option)")) }
   | eof { raise (SyntaxError ("value_option isn't terminated")) }
 and vector =

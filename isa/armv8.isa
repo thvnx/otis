@@ -123,7 +123,28 @@ xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instr
 01010101------------------------ Unallocated
 
 0101011xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+
 11010100xxxxxxxxxxxxxxxxxxxxxxxx		Exception generation
+11010100---------------------1-- Unallocated
+11010100--------------------1--- Unallocated
+11010100-------------------1---- Unallocated
+11010100000----------------00000 Unallocated
+11010100000----------------00001 SVC	#<imm>
+11010100000----------------00010 HVC	#<imm>
+11010100000----------------00011 SMC	#<imm>
+11010100001----------------000-1 Unallocated
+11010100001----------------00000 BRK	#<imm>
+11010100001----------------0001- Unallocated
+11010100010----------------000-1 Unallocated
+11010100010----------------00000 HLT	#<imm>
+11010100010----------------0001- Unallocated
+11010100011----------------000-- Unallocated
+11010100100----------------000-- Unallocated
+11010100101----------------00000 Unallocated
+11010100101----------------00001 DCPS1	{#<imm>}
+11010100101----------------00010 DCPS2	{#<imm>}
+11010100101----------------00011 DCPS3	{#<imm>}
+1101010011-----------------000-- Unallocated
 
 1101010100xxxxxxxxxxxxxxxxxxxxxx		System
 1101010100000---000------------- Unallocated
@@ -252,7 +273,44 @@ xxxx1x0xxxxxxxxxxxxxxxxxxxxxxxxx	Loads and stores
 0x00110x0xxxxx1xxxxxxxxxxxxxxxxx		Unallocated
 0x00110x0xxxxxxxxxxxxxxxxxxxxxxx		Unallocated
 1x00110xxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+
 xx001000xxxxxxxxxxxxxxxxxxxxxxxx		Load/store exclusive
+--0010001-0-----0--------------- Unallocated
+--0010001-1--------------------- Unallocated
+0-001000--1--------------------- Unallocated
+00001000000-----0--------------- STXRB	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+00001000000-----1--------------- STLXRB	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+00001000010-----0--------------- LDXRB	<Wt>, [<Xn|SP>{,#0}]
+00001000010-----1--------------- LDAXRB	<Wt>, [<Xn|SP>{,#0}]
+00001000100-----1--------------- STLRB	<Wt>, [<Xn|SP>{,#0}]
+00001000110-----1--------------- LDARB	<Wt>, [<Xn|SP>{,#0}]
+01001000000-----0--------------- STXRH	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+01001000000-----1--------------- STLXRH	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+01001000010-----0--------------- LDXRH	<Wt>, [<Xn|SP>{,#0}]
+01001000010-----1--------------- LDAXRH	<Wt>, [<Xn|SP>{,#0}]
+01001000100-----1--------------- STLRH	<Wt>, [<Xn|SP>{,#0}]
+01001000110-----1--------------- LDARH	<Wt>, [<Xn|SP>{,#0}]
+10001000000-----0--------------- STXR	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+10001000000-----1--------------- STLXR	<Ws>, <Wt>, [<Xn|SP>{,#0}]
+10001000001-----0--------------- STXP	<Ws>, <Wt1>, <Wt2>, [<Xn|SP>{,#0}]
+10001000001-----1--------------- STLXP	<Ws>, <Wt1>, <Wt2>, [<Xn|SP>{,#0}]
+10001000010-----0--------------- LDXR	<Wt>, [<Xn|SP>{,#0}]
+10001000010-----1--------------- LDAXR	<Wt>, [<Xn|SP>{,#0}]
+10001000011-----0--------------- LDXP	<Wt1>, <Wt2>, [<Xn|SP>{,#0}]
+10001000011-----1--------------- LDAXP	<Wt1>, <Wt2>, [<Xn|SP>{,#0}]
+10001000100-----1--------------- STLR	<Wt>, [<Xn|SP>{,#0}]
+10001000110-----1--------------- LDAR	<Wt>, [<Xn|SP>{,#0}]
+11001000000-----0--------------- STRX	<Ws>, <Xt>, [<Xn|SP>{,#0}]
+11001000000-----1--------------- STLXR	<Ws>, <Xt>, [<Xn|SP>{,#0}]
+11001000001-----0--------------- STXP	<Ws>, <Xt1>, <Xt2>, [<Xn|SP>{,#0}]
+11001000001-----1--------------- STLXP	<Ws>, <Xt1>, <Xt2>, [<Xn|SP>{,#0}]
+11001000010-----0--------------- LDXR	<Xt>, [<Xn|SP>{,#0}]
+11001000010-----1--------------- LDAXR	<Xt>, [<Xn|SP>{,#0}]
+11001000011-----0--------------- LDXP	<Xt1>, <Xt2>, [<Xn|SP>{,#0}]
+11001000011-----1--------------- LDAXP	<Xt1>, <Xt2>, [<Xn|SP>{,#0}]
+11001000100-----1--------------- STLR	<Xt>, [<Xn|SP>{,#0}]
+11001000110-----1--------------- LDAR	<Xt>, [<Xn|SP>{,#0}]
+
 xx001001xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
 xx011x00xxxxxxxxxxxxxxxxxxxxxxxx		Load register (literal)
 xx011x01xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
@@ -304,7 +362,63 @@ xx101x011xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (pre-indexed)
 11101-011----------------------- Unallocated
 
 xx111x00xx0xxxxxxxxx00xxxxxxxxxx		Load/store register (unscaled immediate)
+-11111001-0---------00---------- Unallocated
+00111000000---------00---------- STURB	<Wt>, [<Xn|SP>{, #<simm>}]
+00111000010---------00---------- LDURB	<Wt>, [<Xn|SP>{, #<simm>}]
+00111000100---------00---------- LDURSB	<Xt>, [<Xn|SP>{, #<simm>}]
+00111000110---------00---------- LDURSB <Wt>, [<Xn|SP>{, #<simm>}]
+00111100000---------00---------- STUR	<Bt>, [<Xn|SP>{, #<simm>}]
+00111100010---------00---------- LDUR	<Bt>, [<Xn|SP>{, #<simm>}]
+00111100100---------00---------- STUR	<Qt>, [<Xn|SP>{, #<simm>}]
+00111100110---------00---------- LDUR	<Qt>, [<Xn|SP>{, #<simm>}]
+01111000000---------00---------- STURH	<Wt>, [<Xn|SP>{, #<simm>}]
+01111000010---------00---------- LDURH	<Wt>, [<Xn|SP>{, #<simm>}]
+01111000100---------00---------- LDURSH	<Xt>, [<Xn|SP>{, #<simm>}]
+01111000110---------00---------- LDURSH	<Wt>, [<Xn|SP>{, #<simm>}]
+01111100000---------00---------- STUR	<Ht>, [<Xn|SP>{, #<simm>}]
+01111100010---------00---------- LDUR	<Ht>, [<Xn|SP>{, #<simm>}]
+1-111000110---------00---------- Unallocated
+1-1111001-0---------00---------- Unallocated
+10111000000---------00---------- STUR	<Wt>, [<Xn|SP>{, #<simm>}]
+10111000010---------00---------- LDUR	<Wt>, [<Xn|SP>{, #<simm>}]
+10111000100---------00---------- LDURSW	<Xt>, [<Xn|SP>{, #<simm>}]
+10111100000---------00---------- STUR	<St>, [<Xn|SP>{, #<simm>}]
+10111100010---------00---------- LDUR	<St>, [<Xn|SP>{, #<simm>}]
+11111000000---------00---------- STUR	<Xt>, [<Xn|SP>{, #<simm>}]
+11111000010---------00---------- LDUR	<Xt>, [<Xn|SP>{, #<simm>}]
+11111000100---------00---------- PRFM	(<prfop>|#<imm5>), [<Xn|SP>{, #<simm>}]
+11111100000---------00---------- STUR	<Dt>, [<Xn|SP>{, #<simm>}]
+11111100010---------00---------- LDUR	<Dt>, [<Xn|SP>{, #<simm>}]
+
 xx111x00xx0xxxxxxxxx01xxxxxxxxxx		Load/store register (immediate post-indexed)
+-11111001-0---------01---------- Unallocated
+00111000000---------01---------- STRB	<Wt>, [<Xn|SP>], #<simm>
+00111000010---------01---------- LDRB	<Wt>, [<Xn|SP>], #<simm>
+00111000100---------01---------- LDRSB	<Xt>, [<Xn|SP>], #<simm>
+00111000110---------01---------- LDRSB	<Wt>, [<Xn|SP>], #<simm>
+00111100000---------01---------- STR	<Bt>, [<Xn|SP>], #<simm>
+00111100010---------01---------- LDR	<Bt>, [<Xn|SP>], #<simm>
+00111100100---------01---------- STR	<Qt>, [<Xn|SP>], #<simm>
+00111100110---------01---------- LDR	<Qt>, [<Xn|SP>], #<simm>
+01111000000---------01---------- STRH	<Wt>, [<Xn|SP>], #<simm>
+01111000010---------01---------- LDRH	<Wt>, [<Xn|SP>], #<simm>
+01111000100---------01---------- LDRSH	<Xt>, [<Xn|SP>], #<simm>
+01111000110---------01---------- LDRSH	<Wt>, [<Xn|SP>], #<simm>
+01111100000---------01---------- STR	<Ht>, [<Xn|SP>], #<simm>
+01111100010---------01---------- LDR	<Ht>, [<Xn|SP>], #<simm>
+1-111000110---------01---------- Unallocated
+1-1111001-0---------01---------- Unallocated
+10111000000---------01---------- STR	<Wt>, [<Xn|SP>], #<simm>
+10111000010---------01---------- LDR	<Wt>, [<Xn|SP>], #<simm>
+10111000100---------01---------- LDRSW	<Xt>, [<Xn|SP>], #<simm>
+10111100000---------01---------- STR	<St>, [<Xn|SP>], #<simm>
+10111100010---------01---------- LDR	<St>, [<Xn|SP>], #<simm>
+11111000000---------01---------- STR	<Xt>, [<Xn|SP>], #<simm>
+11111000010---------01---------- LDR	<Xt>, [<Xn|SP>], #<simm>
+11111000100---------01---------- Unallocated
+11111100000---------01---------- STR	<Dt>, [<Xn|SP>], #<simm>
+11111100010---------01---------- LDR	<Dt>, [<Xn|SP>], #<simm>
+
 xx111x00xx0xxxxxxxxx10xxxxxxxxxx		Load/store register (unprivileged)
 xx111x00xx0xxxxxxxxx11xxxxxxxxxx		Load/store register (immediate pre-indexed)
 xx111x00xx1xxxxxxxxx00xxxxxxxxxx		Unallocated
@@ -489,6 +603,23 @@ xxx01011xx0xxxxxxxxxxxxxxxxxxxxx		Add/subtract (shifted register)
 				 NEGS	<Xd>, <Xm>{, <shift> #<amount>}
 
 xxx01011xx1xxxxxxxxxxxxxxxxxxxxx		Add/subtract (extended register)
+---01011--1--------1-1---------- Unallocated
+---01011--1--------11----------- Unallocated
+---01011-11--------------------- Unallocated
+---010111-1--------------------- Unallocated
+00001011001--------------------- ADD	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+00101011001--------------------- ADDS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+				 CMN	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+01001011001--------------------- SUB	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+01101011001--------------------- SUBS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+				 CMP	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+10001011001--------------------- ADD	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+10101011001--------------------- ADDS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+				 CMN	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
+11001011001--------------------- SUB	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+11101011001--------------------- SUBS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+				 CMP	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
+
 xxx11010000xxxxxxxxxxxxxxxxxxxxx		Add/subtract (with carry)
 
 xxx11010010xxxxxxxxx0xxxxxxxxxxx		Conditional compare (register)
@@ -532,7 +663,39 @@ xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
 				 CNEG	<Xd>, <Xn>, <cond>
 
 xxx11010xx1xxxxxxxxxxxxxxxxxxxxx		Unallocated
+
 xxx11011xxxxxxxxxxxxxxxxxxxxxxxx		Data-processing (3 source)
+-0011011010-----1--------------- Unallocated
+-0011011011--------------------- Unallocated
+-0011011100--------------------- Unallocated
+-0011011110-----1--------------- Unallocated
+-0011011111--------------------- Unallocated
+-0111011------------------------ Unallocated
+-0-11011------------------------ Unallocated
+00011011000-----0--------------- MADD	<Wd>, <Wn>, <Wm>, <Wa>
+				 MUL	<Wd>, <Wn>, <Wm>
+00011011000-----1--------------- MSUB	<Wd>, <Wn>, <Wm>, <Wa>
+				 MNEG	<Wd>, <Wn>, <Wm>
+00011011001-----0--------------- Unallocated
+00011011001-----1--------------- Unallocated
+00011011010-----0--------------- Unallocated
+00011011101-----0--------------- Unallocated
+00011011101-----1--------------- Unallocated
+00011011110-----0--------------- Unallocated
+10011011000-----0--------------- MADD	<Xd>, <Xn>, <Xm>, <Xa>
+				 MUL	<Xd>, <Xn>, <Xm>
+10011011000-----1--------------- MSUB	<Xd>, <Xn>, <Xm>, <Xa>
+				 MNEG	<Xd>, <Xn>, <Xm>
+10011011001-----0--------------- SMADDL	<Xd>, <Wn>, <Wm>, <Xa>
+				 SMULL	<Xd>, <Wn>, <Wm>
+10011011001-----1--------------- SMSUBL	<Xd>, <Wn>, <Wm>, <Xa>
+				 SMNEGL	<Xd>, <Wn>, <Wm>
+10011011010-----0--------------- SMULH	<Xd>, <Xn>, <Xm>
+10011011101-----0--------------- UMADDL	<Xd>, <Wn>, <Wm>, <Xa>
+				 UMULL	<Xd>, <Wn>, <Wm>
+10011011101-----1--------------- UMSUBL	<Xd>, <Wn>, <Wm>, <Xa>
+				 UMNEGL <Xd>, <Wn>, <Wm>
+10011011110-----0--------------- UMULH	<Xd>, <Xn>, <Xm>
 
 xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 
@@ -611,6 +774,22 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 011111101-100001111110---------- Unallocated
 
 01x11110xx11000xxxxx10xxxxxxxxxx		Advanded SIMD scalar pairwise
+01-11110--1100000---10---------- Unallocated
+01-11110--11000010--10---------- Unallocated
+01-11110--110000111-10---------- Unallocated
+01-11110--1100010---10---------- Unallocated
+01-11110--110001100-10---------- Unallocated
+01-11110--110001101010---------- Unallocated
+01-11110--11000111--10---------- Unallocated
+01-111101-110000110110---------- Unallocated
+01011110--110001101110---------- ADDP	<V><d>, <Vn>.<T>
+01111110--110001101110---------- Unallocated
+011111100-110000110010---------- FMAXNMP	<V><d>, <Vn>.<T>
+011111100-110000110110---------- FADDP	<V><d>, <Vn>.<T>
+011111100-110000111110---------- FMAXP	<V><d>, <Vn>.<T>
+011111101-110000110010---------- FMINNMP	<V><d>, <Vn>.<T>
+011111101-110000111110---------- FMINP	<V><d>, <Vn>.<T>
+
 01x11110xx1xx1xxxxxx10xxxxxxxxxx		Unallocated
 01x11110xx1xxx1xxxxx10xxxxxxxxxx		Unallocated
 01x11110xx1xxxxxxxxx00xxxxxxxxxx		Advanced SIMD scalar three different
@@ -898,6 +1077,24 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-101110111-----000111---------- BIF	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 
 0xx0111100000xxxxxxxx1xxxxxxxxxx		Advanced SIMD modified immediate
+0--0111100000-------11---------- Unallocated
+0-00111100000---0--001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---0--101---------- ORR	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---10-001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---10-101---------- ORR	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---110-01---------- MOVI	<Vd>.<T>, #<imm8>, MSL #<amount>
+0-00111100000---111001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #0}
+0-00111100000---111101---------- FMOV	<Vd>.<T>, #<imm>
+0-10111100000---0--001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-10111100000---0--101---------- BIC	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-10111100000---10-001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-10111100000---10-101---------- BIC	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-10111100000---110-01---------- MVNI	<Vd>.<T>, #<imm8>, MSL #<amount>
+0010111100000---111001---------- MOVI	<Dd>, #<imm>
+0010111100000---111101---------- Unallocated
+0110111100000---111001---------- MOVI	<Vd>.2D, #<imm>
+0110111100000---111101---------- FMOV	<Vd>.2D, #<imm>
+
 0xx011110xxxxxxxxxxxx1xxxxxxxxxx		Advanced SIMD shift by immediate
 0xx011111xxxxxxxxxxxx1xxxxxxxxxx		Unallocated
 0xx01111xxxxxxxxxxxxx0xxxxxxxxxx		Advanced SIMD vector x indexed element

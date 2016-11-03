@@ -80,8 +80,9 @@ object
            let pstop  = String.index p_code ')' in
            let sub_pattern = Str.string_after (Str.string_before p_code pstop) pstart in
            if (diff sub_pattern pos) then
-             mch (Str.string_after p_code pstart) (pos + 1 + pstop) (* continue checking *)
-           else false (* sub pattern is matched, stop checking *)  
+             mch (Str.string_after p_code (pstop+1)) (pos + (String.length sub_pattern)) (* continue checking *)
+           else false (* sub pattern is matched, stop checking *)
+        | _ -> Printf.fprintf stderr "unreachable (%s)" __LOC__; raise Exit
         end
       else true (* pos = 32, all the bits of the instruction match the pattern *)
     in
