@@ -85,6 +85,7 @@ object(self)
 end;;
   
 class execUnit =
+  let pipeline = Isa.read_pipeline in
 object(self)
   
   val mutable instruction_issued = 0

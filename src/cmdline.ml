@@ -1,12 +1,13 @@
 let usage_text = 
   "usage:\tcmd [options...] <asm_file>+\n"
 
-let isa_file = ref ("/Users/ltheveno/workspace/atbpa/isa/armv8.isa")
+let isa_file = ref ("/Users/ltheveno/workspace/otis/isa/armv8.isa")
   
 let file:string ref = ref ""
 let breakpoint = ref "main"
 
 let exec = ref false
+let pipeline = ref ""
 let nb_instruction = ref false
          
 let cfg_graphviz = ref false
@@ -21,6 +22,7 @@ let scan_cmd_line =
     Arg.align [
         ("-breakpoint", Arg.Set_string breakpoint , "<bp> set breakpoint to bp");
         ("-exec", Arg.Set exec , " execute trace");
+        ("-pipeline", Arg.Set_string pipeline , "<desc> set pipeline description to desc");
         ("-nbi", Arg.Set nb_instruction , " show the number of instruction");
         ("-cfg-graphviz", Arg.Set cfg_graphviz , " Output graphviz graph");
         ("-cfg-text", Arg.Set cfg_text , " Output text graph");

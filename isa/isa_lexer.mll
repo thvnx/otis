@@ -17,7 +17,7 @@ rule main =
   | [' ''\t''('] { main lexbuf }               
   | "Unallocated" { UNALLOC }
   | ['x''0''1']+ '\t' as oc { category (oc,"") lexbuf }
-  | ['-''0''1']+ as oc { INS_OPCODE (oc) }
+  | (['-''0''1'')']|"!=(")+ as oc { INS_OPCODE (oc) }
   | ['.''A'-'Z']* ['1'-'9']*? ('C'?['B''H''W''X'])? as i { let name = (String.lowercase (String.trim i)) in i_name := name; INS_NAME name }
   | '\n' { Lexing.new_line lexbuf; EOL }
   | '<' { value lexbuf }

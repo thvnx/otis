@@ -6,7 +6,7 @@
 
 let hexa_number = "0x" ['0'-'9''a'-'f']+
 let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.']*
-let instruction_name = ' ' ['.''a'-'z']+ '1'?
+let instruction_name = ' ' ['.''a'-'z']+ ['1''2']?
 let register_name = ['x''w''q''d''v''s']
 let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0"             
 let integer = ['+''-']? ['0'-'9']+
