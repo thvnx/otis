@@ -420,7 +420,36 @@ xx111x00xx0xxxxxxxxx01xxxxxxxxxx		Load/store register (immediate post-indexed)
 11111100010---------01---------- LDR	<Dt>, [<Xn|SP>], #<simm>
 
 xx111x00xx0xxxxxxxxx10xxxxxxxxxx		Load/store register (unprivileged)
+
 xx111x00xx0xxxxxxxxx11xxxxxxxxxx		Load/store register (immediate pre-indexed)
+-11111001-0---------11---------- Unallocated
+00111000000---------11---------- STRB	<Wt>, [<Xn|SP>, #<simm>]!
+00111000010---------11---------- LDRB	<Wt>, [<Xn|SP>, #<simm>]!
+00111000100---------11---------- LDRSB	<Xt>, [<Xn|SP>, #<simm>]!
+00111000110---------11---------- LDRSB	<Wt>, [<Xn|SP>, #<simm>]!
+00111100000---------11---------- STR	<Bt>, [<Xn|SP>, #<simm>]!
+00111100010---------11---------- LDR	<Bt>, [<Xn|SP>, #<simm>]!
+00111100100---------11---------- STR	<Qt>, [<Xn|SP>, #<simm>]!
+00111100110---------11---------- LDR	<Qt>, [<Xn|SP>, #<simm>]!
+01111000000---------11---------- STRH	<Wt>, [<Xn|SP>, #<simm>]!
+01111000010---------11---------- LDRH	<Wt>, [<Xn|SP>, #<simm>]!
+01111000100---------11---------- LDRSH	<Xt>, [<Xn|SP>, #<simm>]!
+01111000110---------11---------- LDRSH	<Wt>, [<Xn|SP>, #<simm>]!
+01111100000---------11---------- STR	<Ht>, [<Xn|SP>, #<simm>]!
+01111100010---------11---------- LDR	<Ht>, [<Xn|SP>, #<simm>]!
+1-111000110---------11---------- Unallocated
+1-1111001-0---------11---------- Unallocated
+10111000000---------11---------- STR	<Wt>, [<Xn|SP>, #<simm>]!
+10111000010---------11---------- LDR	<Wt>, [<Xn|SP>, #<simm>]!
+10111000100---------11---------- LDRSW	<Xt>, [<Xn|SP>, #<simm>]!
+10111100000---------11---------- STR	<St>, [<Xn|SP>, #<simm>]!
+10111100010---------11---------- LDR	<St>, [<Xn|SP>, #<simm>]!
+11111000000---------11---------- STR	<Xt>, [<Xn|SP>, #<simm>]!
+11111000010---------11---------- LDR	<Xt>, [<Xn|SP>, #<simm>]!
+11111000100---------11---------- Unallocated
+11111100000---------11---------- STR	<Dt>, [<Xn|SP>, #<simm>]!
+11111100010---------11---------- LDR	<Dt>, [<Xn|SP>, #<simm>]!
+
 xx111x00xx1xxxxxxxxx00xxxxxxxxxx		Unallocated
 xx111x00xx1xxxxxxxxx01xxxxxxxxxx		Unallocated
 
