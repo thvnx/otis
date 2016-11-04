@@ -76,5 +76,6 @@ and properties =
   | "Jump" { BRANCH_PROP (Isa.Jump) }
   | "Return" { BRANCH_PROP (Isa.Return) }
   | "Call" { BRANCH_PROP (Isa.Call) }
+  | ['0'-'9']* as l { LATENCY (int_of_string l) }
   | _   { raise (SyntaxError ("Illegal character (properties)")) }
   | eof { raise (SyntaxError ("properties isn't terminated")) }

@@ -6,6 +6,7 @@
 %token <string * string> CATEGORY
 %token <string> INS_OPCODE INS_NAME
 %token READ WRITE BASE IMM OPT_READ OPT_IMM
+%token <int> LATENCY
 %token <Isa.branch_t> BRANCH_PROP
 
 
@@ -58,6 +59,7 @@
 
   property:
     | p = BRANCH_PROP { Isa.BranchProp (p) }
+    | p = LATENCY { Isa.Latency (p) }
     ;
 
 

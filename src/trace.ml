@@ -36,6 +36,7 @@ class trace_instruction pc oc ins (isa:Isa.instruction_set) =
         (!wtmp, !rtmp)
       end
   in
+  (*let _ = Printf.printf "%s [%d]\n" _str _pattern#latency in*)
 object(self)
                 
   val mutable nb_called = 0
@@ -49,6 +50,9 @@ object(self)
 
   method writes_param = _wparams
   method reads_param = _rparams
+
+  method latency = _pattern#latency
+  method pipeline = _pattern#pipeline
 
   method get_branch_type =
 (*    match _name with
@@ -71,30 +75,95 @@ end;;
 
 class register name =
 object(self)
-  val mutable read_history = [0]
-  val mutable write_history = [0]
+  val mutable read_history:((trace_instruction * int) list) = []
+  val mutable write_history:((trace_instruction * int) list) = []
 
-  method last_read = List.hd read_history
-  method last_write = List.hd write_history
+  method last_read  = try let (_, l) = List.hd read_history in l with Failure ("hd") -> 1
+  method last_write = try let (i, l) = List.hd write_history in l + i#latency with Failure ("hd") -> 1 
 
-  method read r =
-    read_history <- r :: read_history;
+  method read instr r = (* read is more like a available cycle *)
+    read_history <- (instr, r) :: read_history;
     self#last_write
     
-  method write r = write_history <- r :: write_history
+  method write instr r = write_history <- (instr, r) :: write_history
 end;;
+
+
+class pipeline name way =
+  let wn = match way with Isa.Inf -> -1 | Isa.Fixed n -> n in
+  (*let _ = Printf.printf "Pipeline [%d way(s)]\n" wn in*)
+object(self)
+  val mutable history = [[]]
+
+  method add (instr:trace_instruction) c =
+    let rec first_available_or_new_pipeline idx p =
+      match p with
+      | h::t -> begin (* todo: first case is identical to the one of the next function *)
+          try
+            let (i, n) = List.hd h in
+            if n + i#latency < c then begin
+              history <- List.mapi ( fun i l -> if i = idx then (instr, c) :: l else l ) history; c end
+            else first_available_or_new_pipeline (idx + 1) t
+          with
+            Failure ("hd") -> history <- List.mapi ( fun i l -> if i = idx then [(instr, c)] else l ) history; c
+        end
+      | [] -> history <- history @ [[(instr,c)]]; c
+    in
+    let rec first_available_pipeline idx p =
+      match p with
+      | h::t -> begin
+          try
+            let (i, n) = List.hd h in
+            if n + i#latency < c then begin
+              history <- List.mapi ( fun i l -> if i = idx then (instr, c) :: l else l ) history; c end(* c *)
+            else first_available_pipeline (idx + 1) t
+          with
+            Failure ("hd") -> history <- List.mapi ( fun i l -> if i = idx then [(instr, c)] else l ) history; c (* c *)
+        end
+      | [] ->
+         let rec find_min idx p =
+           match p with
+           | ((_, n)::_) :: ((_, m)::_) :: t -> if n <= m then find_min idx (List.tl p)
+                                                else find_min (idx + 1) (List.tl p)
+           | _ :: [] -> idx
+           | _ -> Printf.fprintf stderr "Error: unreachable\n"; raise Exit
+         in
+         let pm = (find_min 0 history) in
+         let (im, cm) = List.hd (List.nth history pm) in
+         let c = im#latency + cm + 1 in
+         history <- List.mapi ( fun i l -> if i = pm then (instr, c) :: l else l ) history; c
+    in
+    match wn with
+    | -1 -> first_available_or_new_pipeline 0 history
+    | 1  -> begin history <- [(instr, c) :: (List.hd history)];
+                  try
+                    let (i, prev) = (List.nth (List.hd history) 1) in
+                    max c (prev + i#latency + 1)
+                  with
+                    Failure ("nth") -> c
+            end
+    | n -> if n > 1 then
+               first_available_pipeline 0 history
+           else begin Printf.fprintf stderr "Error: unreachable\n"; raise Exit end
+       
+end;;
+
   
 class execUnit =
-  let pipeline = Isa.read_pipeline in
+  let _pipelines =
+    let t = Hashtbl.create 5 in
+    List.iter ( fun p -> match p with Isa.PipelineDesc (pipe, way) -> Hashtbl.add t pipe (new pipeline pipe way) ) Isa.read_pipeline;
+    t in
 object(self)
   
   val mutable instruction_issued = 0
-  val mutable execution_cycle = 0
-  val mutable execution_cycle_max = 0
+  val mutable execution_cycle = 1
+  val mutable execution_cycle_max = 1
   val instruction_counter = Hashtbl.create 0
   val registers = Hashtbl.create 0
+  val pipelines = _pipelines
 
-  val history = Hashtbl.create 0
+  val history = Hashtbl.create 0 (* todo move history into register class *)
   
   method issue_instruction fd (instr:trace_instruction) =
     let update_history =
@@ -104,19 +173,25 @@ object(self)
       with
         Not_found -> Hashtbl.add history execution_cycle [instr]
     in
+    let history_max_cycle =
+      execution_cycle_max + 1 (* todo replace +1 by latency of the last instruction which modified condition flags *)
+    in
     let rec read_register r =
       try
-        (Hashtbl.find registers r)#read execution_cycle
+        (Hashtbl.find registers r)#read instr execution_cycle
       with
         Not_found -> Hashtbl.add registers r (new register r);
                      read_register r
     in
     let rec write_register r =
       try
-        (Hashtbl.find registers r)#write execution_cycle
+        (Hashtbl.find registers r)#write instr execution_cycle
       with
         Not_found -> Hashtbl.add registers r (new register r);
                      write_register r
+    in
+    let fill_pipeline i c =
+      (Hashtbl.find pipelines i#pipeline)#add i c
     in
     let key = instr#get_name in
     begin
@@ -128,15 +203,21 @@ object(self)
     end;
     instruction_issued <- instruction_issued + 1;
 
-    (* map the list of read parameters to get the cycle at which the instruction can be executed: the maximum cycle count of the parameters *)
+    (* map the list of read and write parameters to get the cycle at which the instruction can be executed: the maximum cycle count of the parameters *)
     let exec_at = Common.maxn (
                       List.map ( fun i ->
                                  read_register i
                                )
                                (List.concat (List.map ( fun i -> Aarch64.parameter_register_id i ) (instr#reads_param @ instr#writes_param)));
                     ) in
-    (* execute the instruction consists of increment the cycle count *)
-    execution_cycle <- (if instr#get_branch_type = Isa.NoBranch then exec_at else (max execution_cycle_max exec_at)) + 1;
+    (* execute the instruction consists of increment the cycle count TODO: change this comment *)
+
+    
+    
+    execution_cycle <- if instr#get_branch_type = Isa.NoBranch then exec_at else (max history_max_cycle exec_at); (* instr can be run at this cyle *)
+    execution_cycle <- fill_pipeline instr execution_cycle; (* but we have to take care off pipeline dependancies *)
+
+
     execution_cycle_max <- max execution_cycle execution_cycle_max;
     (* update the cycle count of the written parameters *)
     List.iter ( fun i ->

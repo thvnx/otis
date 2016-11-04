@@ -3,8 +3,18 @@ exception OpCodeNeq of string
 type param_t    = Read | Write | Base | Imm | OptionRead | OptionImm
 type branch_t   = Jump | Call | Return | NoBranch
 
+type pipeline_way_t = Inf | Fixed of int
+type pipeline_kind_t = Integer
+                     | MultiCycle
+                     | LoadStore
+                     | Neon
+                     | Branch
+                     | NoPipeline
+type pipeline_desc_t = PipelineDesc of pipeline_kind_t * pipeline_way_t
+                                       
 type property_t = BranchProp of branch_t
                 | Latency of int
+                | Pipeline of pipeline_kind_t
 
                                                       
 let param_to_string l =
@@ -36,13 +46,33 @@ class instruction ?alias_of _op _name _params _properties =
       | []   -> NoBranch
     in p _properties
   in
-
+  let _latency = 
+    let rec p l =
+      match l with
+      | (Latency l)::t -> l
+      | h::t -> p t
+      | []   ->
+         Printf.fprintf stderr "Warning: insrtruction %s [%s] hasn't latency property defined (returing 1 by default)\n" _name _op; 1
+    in if (Cmdline.hardmodel !Cmdline.hw) = Cmdline.PerfectILP then 1 else p _properties (* todo improve hardware model detection *)
+  in
+  let _pipeline = 
+    let rec p l =
+      match l with
+      | (Pipeline p)::t -> p
+      | h::t -> p t
+      | []   ->
+         Printf.fprintf stderr "Warning: insrtruction %s [%s] hasn't pipeline property defined (returing NoPipeline by default)\n" _name _op; NoPipeline
+    in if (Cmdline.hardmodel !Cmdline.hw) = Cmdline.PerfectILP then NoPipeline else p _properties (* todo improve hardware model detection *)
+  in
   (*let _ = print_endline _str in*)
 object
   method name = _name
   method params = _params
 
   method branch = _branch
+
+  method latency = _latency
+  method pipeline = _pipeline
 
   method params_nonoptional =
     List.filter (fun i -> match i with OptionRead | OptionImm -> false | _ -> true) _params
@@ -115,7 +145,7 @@ object
        Printf.fprintf stderr "Warning: insrtruction %s wasn't found in ISA\n\
                               \tthe instruction has the following opcode: 0x%Lx, an empty pattern was returned\n"
                       name oc;
-       new instruction "--------------------------------" "" [] [] 
+       new instruction "--------------------------------" name [] [] 
     | (_,h) :: [] -> h
     | (_,h) :: _  ->
        Printf.fprintf stderr "Warning: insrtruction %s was found too much times (%d) in ISA\n\
@@ -128,23 +158,18 @@ object
 end;;
 
 
-type pipeline_way_t = Inf | Fixed of int
-type pipeline_kind_t = Integer of pipeline_way_t
-                     | MultiCycle of pipeline_way_t
-                     | LoadStore of pipeline_way_t
-                     | Neon of pipeline_way_t
-                     | Branch of pipeline_way_t
+
   
 let read_pipeline =
-  let default = ref [Integer Inf; MultiCycle Inf; LoadStore Inf; Neon Inf; Branch Inf] in
+  let default = ref [PipelineDesc (Integer, Inf); PipelineDesc (MultiCycle, Inf); PipelineDesc (LoadStore, Inf); PipelineDesc (Neon, Inf); PipelineDesc (Branch, Inf); PipelineDesc (NoPipeline, Inf)] in
   let read_pipe p n =
     let n = int_of_string n in
     match p with
-      "I" -> default := List.map (fun i -> match i with Integer _ -> Integer (Fixed n) | _ -> i) !default
-    | "MC" -> default := List.map (fun i -> match i with MultiCycle _ -> MultiCycle (Fixed n) | _ -> i) !default
-    | "LS" -> default := List.map (fun i -> match i with LoadStore _ -> LoadStore (Fixed n) | _ -> i) !default
-    | "N" -> default := List.map (fun i -> match i with Neon _ -> Neon (Fixed n) | _ -> i) !default
-    | "B" -> default := List.map (fun i -> match i with Branch _ -> Branch (Fixed n) | _ -> i) !default
+      "I" -> default := List.map (fun i -> match i with PipelineDesc (Integer, _) -> PipelineDesc (Integer, Fixed n) | _ -> i) !default
+    | "MC" -> default := List.map (fun i -> match i with PipelineDesc (MultiCycle, _) -> PipelineDesc (MultiCycle, Fixed n) | _ -> i) !default
+    | "LS" -> default := List.map (fun i -> match i with PipelineDesc (LoadStore, _) -> PipelineDesc (LoadStore, Fixed n) | _ -> i) !default
+    | "N" -> default := List.map (fun i -> match i with PipelineDesc (Neon, _) -> PipelineDesc (Neon, Fixed n) | _ -> i) !default
+    | "B" -> default := List.map (fun i -> match i with PipelineDesc (Branch, _) -> PipelineDesc (Branch, Fixed n) | _ -> i) !default
     | _ -> Printf.fprintf stderr "Error: pipeline mnemonic %s is unknown\n\
                                   \tKnown mnemonics are: I, MC, LS, B, and N\n"
                           p;
@@ -160,6 +185,6 @@ let read_pipeline =
     | Str.Text _ :: t -> Printf.fprintf stderr "Error: unreachable\n"; raise Exit
   in
   match !Cmdline.pipeline with
-  | "Cortex-A53" -> [Integer (Fixed 1); MultiCycle (Fixed 1); LoadStore (Fixed 1); Neon (Fixed 1); Branch (Fixed 1)]
-  | "Cortex-A57" -> [Integer (Fixed 2); MultiCycle (Fixed 1); LoadStore (Fixed 2); Neon (Fixed 2); Branch (Fixed 1)]
+  | "Cortex-A53" -> [PipelineDesc (Integer, Fixed 1); PipelineDesc (MultiCycle, Fixed 1); PipelineDesc (LoadStore, Fixed 1); PipelineDesc (Neon, Fixed 1); PipelineDesc (Branch, Fixed 1); PipelineDesc (NoPipeline, Fixed 1)]
+  | "Cortex-A57" -> [PipelineDesc (Integer, Fixed 2); PipelineDesc (MultiCycle, Fixed 1); PipelineDesc (LoadStore, Fixed 2); PipelineDesc (Neon, Fixed 2); PipelineDesc (Branch, Fixed 1); PipelineDesc (NoPipeline, Fixed 1)]
   | s -> read (Str.full_split (Str.regexp "[A-Z]+") s)
