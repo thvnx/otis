@@ -29,13 +29,13 @@ xxx100100xxxxxxxxxxxxxxxxxxxxxxx		Logical (immediate)
 0011001000---------------------- ORR	<Wd|WSP>, <Wn>, #<imm>
 				 MOV	<Wd|WSP>, #<imm>
 0101001000---------------------- EOR	<Wd|WSP>, <Wn>, #<imm>
-0111001000---------------------- :CondFlagAsOutput: ANDS	<Wd>, <Wn>, #<imm>
+0111001000---------------------- :CondFlagAsOutput:Integer: ANDS	<Wd>, <Wn>, #<imm>
 				 TST	<Wn>, #<imm>
 100100100----------------------- AND	<Xd|SP>, <Xn>, #<imm>
 101100100----------------------- ORR	<Xd|SP>, <Xn>, #<imm>
 				 MOV	<Xd|SP>, #<imm>
 110100100----------------------- EOR	<Xd|SP>, <Xn>, #<imm>
-111100100----------------------- :CondFlagAsOutput: ANDS	<Xd>, <Xn>, #<imm>
+111100100----------------------- :CondFlagAsOutput:Integer: ANDS	<Xd>, <Xn>, #<imm>
 				 TST	<Xn>, #<imm>
 
 xxx100101xxxxxxxxxxxxxxxxxxxxxxx		Move wide (immediate)
@@ -103,22 +103,22 @@ xxx100111xxxxxxxxxxxxxxxxxxxxxxx		Extract
 xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instructions
 
 0101010xxxxxxxxxxxxxxxxxxxxxxxxx		Conditional branch (immediate)
-01010100-------------------00000 :Jump:CondFlagAsInput: B.EQ	<label>
-01010100-------------------00001 :Jump:CondFlagAsInput: B.NE	<label>
-01010100-------------------00010 :Jump:CondFlagAsInput: B.CS	<label>
-01010100-------------------00011 :Jump:CondFlagAsInput: B.CC	<label>
-01010100-------------------00100 :Jump:CondFlagAsInput: B.MI	<label>
-01010100-------------------00101 :Jump:CondFlagAsInput: B.PL	<label>
-01010100-------------------00110 :Jump:CondFlagAsInput: B.VS	<label>
-01010100-------------------00111 :Jump:CondFlagAsInput: B.VC	<label>
-01010100-------------------01000 :Jump:CondFlagAsInput: B.HI	<label>
-01010100-------------------01001 :Jump:CondFlagAsInput: B.LS	<label>
-01010100-------------------01010 :Jump:CondFlagAsInput: B.GE	<label>
-01010100-------------------01011 :Jump:CondFlagAsInput: B.LT	<label>
-01010100-------------------01100 :Jump:CondFlagAsInput: B.GT	<label>
-01010100-------------------01101 :Jump:CondFlagAsInput: B.LE	<label>
-01010100-------------------01110 :Jump:CondFlagAsInput: B.AL	<label>
-01010100-------------------01111 :Jump:CondFlagAsInput: B.NV	<label>
+01010100-------------------00000 :Jump:CondFlagAsInput:Branch: B.EQ	<label>
+01010100-------------------00001 :Jump:CondFlagAsInput:Branch: B.NE	<label>
+01010100-------------------00010 :Jump:CondFlagAsInput:Branch: B.CS	<label>
+01010100-------------------00011 :Jump:CondFlagAsInput:Branch: B.CC	<label>
+01010100-------------------00100 :Jump:CondFlagAsInput:Branch: B.MI	<label>
+01010100-------------------00101 :Jump:CondFlagAsInput:Branch: B.PL	<label>
+01010100-------------------00110 :Jump:CondFlagAsInput:Branch: B.VS	<label>
+01010100-------------------00111 :Jump:CondFlagAsInput:Branch: B.VC	<label>
+01010100-------------------01000 :Jump:CondFlagAsInput:Branch: B.HI	<label>
+01010100-------------------01001 :Jump:CondFlagAsInput:Branch: B.LS	<label>
+01010100-------------------01010 :Jump:CondFlagAsInput:Branch: B.GE	<label>
+01010100-------------------01011 :Jump:CondFlagAsInput:Branch: B.LT	<label>
+01010100-------------------01100 :Jump:CondFlagAsInput:Branch: B.GT	<label>
+01010100-------------------01101 :Jump:CondFlagAsInput:Branch: B.LE	<label>
+01010100-------------------01110 :Jump:CondFlagAsInput:Branch: B.AL	<label>
+01010100-------------------01111 :Jump:CondFlagAsInput:Branch: B.NV	<label>
 01010100-------------------1---- Unallocated
 01010101------------------------ Unallocated
 
@@ -192,7 +192,7 @@ xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instr
 1101011------------------------- Unallocated
 1101011000011111000000-----00000 :Jump: BR	<Xn>
 1101011000111111000000-----00000 :Call: BLR	<Xn>
-1101011001011111000000-----00000 :Return: RET	{<Xn>}
+1101011001011111000000-----00000 :Return:Branch: RET	{<Xn>}
 11010110011--------------------- Unallocated
 1101011010---------------------- Unallocated
 11010110100111110000001111100000 ERET
@@ -596,7 +596,7 @@ xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 				 MVN	<Wd>, <Wm>{, <shift> #<amount>}
 01001010--0--------------------- EOR	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 01001010--1--------------------- EON	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
-01101010--0--------------------- :CondFlagAsOutput: ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01101010--0--------------------- :CondFlagAsOutput:Integer: ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 TST	<Wn>, <Wm>{, <shift> #<amount>}
 01101010--1--------------------- :CondFlagAsOutput: BICS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 10001010--0--------------------- AND	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
@@ -607,7 +607,7 @@ xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 				 MVN	<Xd>, <Xm>{, <shift> #<amount>}
 11001010--0--------------------- EOR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 11001010--1--------------------- EON	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
-11101010--0--------------------- :CondFlagAsOutput: ANDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11101010--0--------------------- :CondFlagAsOutput:Integer: ANDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 TST	<Xn>, <Xm>{, <shift> #<amount>}
 11101010--1--------------------- :CondFlagAsOutput: BICS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 
@@ -673,7 +673,7 @@ xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
 ---11010100---------1----------- Unallocated
 --111010100--------------------- Unallocated
 00011010100---------00---------- CSEL	<Wd>, <Wn>, <Wm>, <cond>
-00011010100---------01---------- :CondFlagAsInput: CSINC	<Wd>, <Wn>, <Wm>, <cond>
+00011010100---------01---------- :CondFlagAsInput:Integer: CSINC	<Wd>, <Wn>, <Wm>, <cond>
 				 CINC	<Wd>, <Wn>, <cond>
 				 CSET <Wd>, <cond>
 01011010100---------00---------- CSINV	<Wd>, <Wn>, <Wm>, <cond>
@@ -682,7 +682,7 @@ xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
 01011010100---------01---------- CSNEG	<Wd>, <Wn>, <Wm>, <cond>
 				 CNEG	<Wd>, <Wn>, <cond>
 10011010100---------00---------- CSEL	<Xd>, <Xn>, <Xm>, <cond>
-10011010100---------01---------- :CondFlagAsInput: CSINC	<Xd>, <Xn>, <Xm>, <cond>
+10011010100---------01---------- :CondFlagAsInput:Integer: CSINC	<Xd>, <Xn>, <Xm>, <cond>
 				 CINC	<Xd>, <Xn>, <cond>
 				 CSET	<Xd>, <cond>
 11011010100---------00---------- CSINV	<Xd>, <Xn>, <Xm>, <cond>
@@ -952,7 +952,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 				 FCVTN2	<Vd>.<Tb>, <Vn>.<Ta>
 0-0011100-100001011110---------- FCVTL	<Vd>.<Ta>, <Vn>.<Tb>
 				 FCVTL2	<Vd>.<Ta>, <Vn>.<Tb>
-0-0011100-100001100010---------- FRINTN	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001100010---------- :Neon: FRINTN	<Vd>.<T>, <Vn>.<T>
 0-0011100-100001100110---------- FRINTM	<Vd>.<T>, <Vn>.<T>
 0-0011100-100001101010---------- FCVTNS	<Vd>.<T>, <Vn>.<T>
 0-0011100-100001101110---------- FCVTMS	<Vd>.<T>, <Vn>.<T>
@@ -1042,7 +1042,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-001110--1-----101111---------- ADDP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----110001---------- FMAXNM	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----110011---------- FMLA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-0011100-1-----110101---------- FADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011100-1-----110101---------- :Neon: FADD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----110111---------- FMULX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----111001---------- FCMEQ	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----111011---------- Unallocated
@@ -1052,7 +1052,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-001110011-----000111---------- BIC	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011101-1-----110001---------- FMINNM	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011101-1-----110011---------- FMLS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-0011101-1-----110101---------- FSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-0011101-1-----110101---------- :Neon: FSUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011101-1-----110111---------- Unallocated
 0-0011101-1-----111001---------- Unallocated
 0-0011101-1-----111011---------- Unallocated
@@ -1087,7 +1087,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-1011100-1-----110001---------- FMAXNMP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----110011---------- Unallocated
 0-1011100-1-----110101---------- FADDP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-1011100-1-----110111---------- FMUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----110111---------- :Neon: FMUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----111001---------- FCMGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----111011---------- FACGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----111101---------- FMAXP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
@@ -1113,7 +1113,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-00111100000---10-101---------- ORR	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-00111100000---110-01---------- MOVI	<Vd>.<T>, #<imm8>, MSL #<amount>
 0-00111100000---111001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #0}
-0-00111100000---111101---------- FMOV	<Vd>.<T>, #<imm>
+0-00111100000---111101---------- :Neon: FMOV	<Vd>.<T>, #<imm>
 0-10111100000---0--001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---0--101---------- BIC	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---10-001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
@@ -1122,7 +1122,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0010111100000---111001---------- MOVI	<Dd>, #<imm>
 0010111100000---111101---------- Unallocated
 0110111100000---111001---------- MOVI	<Vd>.2D, #<imm>
-0110111100000---111101---------- FMOV	<Vd>.2D, #<imm>
+0110111100000---111101---------- :Neon: FMOV	<Vd>.2D, #<imm>
 
 0xx011110xxxxxxxxxxxx1xxxxxxxxxx		Advanced SIMD shift by immediate
 0xx011111xxxxxxxxxxxx1xxxxxxxxxx		Unallocated
@@ -1146,8 +1146,8 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 0001111000100011000000---------- UCVTF	<Sd>, <Wn>
 0001111000100100000000---------- FCVTAS	<Wd>, <Sn>
 0001111000100101000000---------- FCVTAU	<Wd>, <Sn>
-0001111000100110000000---------- FMOV	<Wd>, <Sn>
-0001111000100111000000---------- FMOV	<Sd>, <Wn>
+0001111000100110000000---------- :LoadStore: FMOV	<Wd>, <Sn>
+0001111000100111000000---------- :LoadStore: FMOV	<Sd>, <Wn>
 0001111000101000000000---------- FCVTPS	<Wd>, <Sn>
 0001111000101001000000---------- FCVTPU	<Wd>, <Sn>
 000111100011-11-000000---------- Unallocated
@@ -1189,8 +1189,8 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 1001111001100011000000---------- UCVTF	<Dd>, <Xn>
 1001111001100100000000---------- FCVTAS	<Xd>, <Dn>
 1001111001100101000000---------- FCVTAU	<Xd>, <Dn>
-1001111001100110000000---------- FMOV	<Xd>, <Dn>
-1001111001100111000000---------- FMOV	<Dd>, <Xn>
+1001111001100110000000---------- :LoadStore: FMOV	<Xd>, <Dn>
+1001111001100111000000---------- :LoadStore: FMOV	<Dd>, <Xn>
 1001111001101000000000---------- FCVTPS	<Xd>, <Dn>
 1001111001101001000000---------- FCVTPU	<Xd>, <Dn>
 100111100111-11-000000---------- Unallocated
@@ -1199,8 +1199,8 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 1001111001111000000000---------- FCVTZS	<Xd>, <Dn>
 1001111001111001000000---------- FCVTZU	<Xd>, <Dn>
 10011110101-011-000000---------- Unallocated
-1001111010101110000000---------- FMOV	<Xd>, <Vn>.D[1]
-1001111010101111000000---------- FMOV	<Vd>.D[1], <Xn>
+1001111010101110000000---------- :LoadStore: FMOV	<Xd>, <Vn>.D[1]
+1001111010101111000000---------- :LoadStore: FMOV	<Vd>.D[1], <Xn>
 100111101011-11-000000---------- Unallocated
 
 x0x11110xx1xxxxx100000xxxxxxxxxx		Unallocated
@@ -1209,7 +1209,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 -0-11110--1-1----10000---------- Unallocated
 -0-11110--11-----10000---------- Unallocated
 -0111110--1------10000---------- Unallocated
-0001111000100000010000---------- FMOV	<Sd>, <Sn>
+0001111000100000010000---------- :Neon: FMOV	<Sd>, <Sn>
 0001111000100000110000---------- FABS	<Sd>, <Sn>
 0001111000100001010000---------- FNEG	<Sd>, <Sn>
 0001111000100001110000---------- FSQRT	<Sd>, <Sn>
@@ -1217,7 +1217,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 0001111000100010110000---------- FCVT	<Dd>, <Sn>
 0001111000100011010000---------- Unallocated
 0001111000100011110000---------- FCVT	<Hd>, <Sn>
-0001111000100100010000---------- FRINTN	<Sd>, <Sn>
+0001111000100100010000---------- :Neon: FRINTN	<Sd>, <Sn>
 0001111000100100110000---------- FRINTP	<Sd>, <Sn>
 0001111000100101010000---------- FRINTM	<Sd>, <Sn>
 0001111000100101110000---------- FRINTZ	<Sd>, <Sn>
@@ -1225,7 +1225,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 0001111000100110110000---------- Unallocated
 0001111000100111010000---------- FRINTX	<Sd>, <Sn>
 0001111000100111110000---------- FRINTI	<Sd>, <Sn>
-0001111001100000010000---------- FMOV	<Dd>, <Dn>
+0001111001100000010000---------- :Neon: FMOV	<Dd>, <Dn>
 0001111001100000110000---------- FABS	<Dd>, <Dn>
 0001111001100001010000---------- FNEG	<Dd>, <Dn>
 0001111001100001110000---------- FSQRT	<Dd>, <Dn>
@@ -1233,7 +1233,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 0001111001100010110000---------- Unallocated
 0001111001100011010000---------- Unallocated
 0001111001100011110000---------- FCVT	<Hd>, <Dn>
-0001111001100100010000---------- FRINTN	<Dd>, <Dn>
+0001111001100100010000---------- :Neon: FRINTN	<Dd>, <Dn>
 0001111001100100110000---------- FRINTP	<Dd>, <Dn>
 0001111001100101010000---------- FRINTM	<Dd>, <Dn>
 0001111001100101110000---------- FRINTZ	<Dd>, <Dn>
@@ -1256,12 +1256,12 @@ x0x11110xx1xxxxxxx1000xxxxxxxxxx		Floating-point compare
 -0-11110--1-----1-1000---------- Unallocated
 -0-11110101-------1000---------- Unallocated
 -0111110--1-------1000---------- Unallocated
-00011110001-----001000-----00000 :CondFlagAsOutput: FCMP	<Sn>, <Sm>
-00011110001-----001000-----01000 :CondFlagAsOutput: FCMP	<Sn>, #0.0
+00011110001-----001000-----00000 :CondFlagAsOutput:Neon: FCMP	<Sn>, <Sm>
+00011110001-----001000-----01000 :CondFlagAsOutput:Neon: FCMP	<Sn>, #0.0
 00011110001-----001000-----10000 FCMPE	<Sn>, <Sm>
 00011110001-----001000-----11000 FCMPE	<Sn>, #0.0
-00011110011-----001000-----00000 :CondFlagAsOutput: FCMP	<Dn>, <Dm>
-00011110011-----001000-----01000 :CondFlagAsOutput: FCMP	<Dn>, #0.0
+00011110011-----001000-----00000 :CondFlagAsOutput:Neon: FCMP	<Dn>, <Dm>
+00011110011-----001000-----01000 :CondFlagAsOutput:Neon: FCMP	<Dn>, #0.0
 00011110011-----001000-----10000 FCMPE	<Dn>, <Dm>
 00011110011-----001000-----11000 FCMPE	<Dn>, #0.0
 10-11110--1-------1000---------- Unallocated
@@ -1274,8 +1274,8 @@ x0x11110xx1xxxxxxxx100xxxxxxxxxx		Floating-point immediate
 -0-11110--1--------1001--------- Unallocated
 -0-11110101--------100---------- Unallocated
 -0111110--1--------100---------- Unallocated
-00011110001--------10000000----- FMOV	<Sd>, #<imm>
-00011110011--------10000000----- FMOV	<Sd>, #<imm>
+00011110001--------10000000----- :Neon: FMOV	<Sd>, #<imm>
+00011110011--------10000000----- :Neon: FMOV	<Sd>, #<imm>
 10-11110--1--------100---------- Unallocated
 
 x0x11110xx1xxxxxxxxx01xxxxxxxxxx		Floating-point conditional compare
@@ -1286,19 +1286,19 @@ x0x11110xx1xxxxxxxxx10xxxxxxxxxx		Floating-point data-processing (2 source)
 -0-11110--1-----11--10---------- Unallocated
 -0-11110101---------10---------- Unallocated
 -0111110--1---------10---------- Unallocated
-00011110001-----000010---------- FMUL	<Sd>, <Sn>, <Sm>
+00011110001-----000010---------- :Neon: FMUL	<Sd>, <Sn>, <Sm>
 00011110001-----000110---------- FDIV	<Sd>, <Sn>, <Sm>
-00011110001-----001010---------- FADD	<Sd>, <Sn>, <Sm>
-00011110001-----001110---------- FSUB	<Sd>, <Sn>, <Sm>
+00011110001-----001010---------- :Neon: FADD	<Sd>, <Sn>, <Sm>
+00011110001-----001110---------- :Neon: FSUB	<Sd>, <Sn>, <Sm>
 00011110001-----010010---------- FMAX	<Sd>, <Sn>, <Sm>
 00011110001-----010110---------- FMIN	<Sd>, <Sn>, <Sm>
 00011110001-----011010---------- FMAXNM	<Sd>, <Sn>, <Sm>
 00011110001-----011110---------- FMINNM	<Sd>, <Sn>, <Sm>
 00011110001-----100010---------- FNMUL	<Sd>, <Sn>, <Sm>
-00011110011-----000010---------- FMUL	<Dd>, <Dn>, <Dm>
+00011110011-----000010---------- :Neon: FMUL	<Dd>, <Dn>, <Dm>
 00011110011-----000110---------- FDIV	<Dd>, <Dn>, <Dm>
-00011110011-----001010---------- FADD	<Dd>, <Dn>, <Dm>
-00011110011-----001110---------- FSUB	<Dd>, <Dn>, <Dm>
+00011110011-----001010---------- :Neon: FADD	<Dd>, <Dn>, <Dm>
+00011110011-----001110---------- :Neon: FSUB	<Dd>, <Dn>, <Dm>
 00011110011-----010010---------- FMAX	<Dd>, <Dn>, <Dm>
 00011110011-----010110---------- FMIN	<Dd>, <Dn>, <Dm>
 00011110011-----011010---------- FMAXNM	<Dd>, <Dn>, <Dm>

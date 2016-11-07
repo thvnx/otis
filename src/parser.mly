@@ -2,7 +2,7 @@
     open Aarch64
                            
     let instruction_table = Hashtbl.create 50000
-    let isa = Isa_reader.read_isa !Cmdline.isa_file
+    let isa = Isa_reader.read_isa !Cmdline.isa_description_file
     let trc = new Trace.trace isa
 %}
 

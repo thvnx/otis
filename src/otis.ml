@@ -3,7 +3,7 @@ open Lexing
 let _ =
   Cmdline.scan_cmd_line;
   
-  let filechan = open_in !Cmdline.file in
+  let filechan = open_in !Cmdline.trace_file in
   let lexbuf   = Lexing.from_channel filechan in
   let trace  =
     try
@@ -29,13 +29,13 @@ let _ =
 
   (*trace#isa#print; *)
 
-  if !Cmdline.cfg_graphviz then trace#dot_trace_fn !Cmdline.breakpoint;
-  if !Cmdline.trace_graphviz then trace#dot_trace !Cmdline.breakpoint;
-  if !Cmdline.cfg_text then trace#print_trace_fn !Cmdline.breakpoint;
-  if !Cmdline.cfg_tikz then trace#tikz_trace !Cmdline.breakpoint;
-  if !Cmdline.trace_text then trace#print_trace !Cmdline.breakpoint;
+  if !Cmdline.trace_function_graphviz then trace#dot_trace_fn !Cmdline.trace_breakpoint;
+  if !Cmdline.trace_instruction_graphviz then trace#dot_trace !Cmdline.trace_breakpoint;
+  if !Cmdline.trace_function_text then trace#print_trace_fn !Cmdline.trace_breakpoint;
+  if !Cmdline.trace_function_tex then trace#tikz_trace !Cmdline.trace_breakpoint;
+  if !Cmdline.trace_instruction_text then trace#print_trace !Cmdline.trace_breakpoint;
   
-  if !Cmdline.nb_instruction then trace#print_nb_instruction !Cmdline.breakpoint;
-  if !Cmdline.exec then trace#exec !Cmdline.breakpoint;
+  (*  if !Cmdline.nb_instruction then trace#print_nb_instruction !Cmdline.breakpoint;*)
+  if !Cmdline.trace_run_analysis then trace#exec !Cmdline.trace_breakpoint;
 
-  if !Cmdline.pipeline_tikz then trace#tikz_pipeline !Cmdline.breakpoint
+  if !Cmdline.dump_analysis_pipeline then trace#tikz_pipeline !Cmdline.trace_breakpoint

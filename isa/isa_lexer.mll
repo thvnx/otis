@@ -76,6 +76,11 @@ and properties =
   | "Jump" { BRANCH_PROP (Isa.Jump) }
   | "Return" { BRANCH_PROP (Isa.Return) }
   | "Call" { BRANCH_PROP (Isa.Call) }
+  | "Neon" { PIPELINE_PROP Isa.Neon }
+  | "LoadStore" { PIPELINE_PROP Isa.LoadStore }
+  | "Branch" { PIPELINE_PROP Isa.Branch }
+  | "Integer" { PIPELINE_PROP Isa.Integer }
+  | "MultiCycle" { PIPELINE_PROP Isa.MultiCycle }
   | "CondFlagAsInput" { COND_FLAG_INPUT }
   | "CondFlagAsOutput" { COND_FLAG_OUTPUT }
   | ['0'-'9']* as l { LATENCY (int_of_string l) }

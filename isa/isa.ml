@@ -185,7 +185,7 @@ let build_pipeline desc =
     | "LS" -> PipelineDesc (LoadStore, if n > 0 then Fixed n else Inf) :: acc
     | "N" -> PipelineDesc (Neon, if n > 0 then Fixed n else Inf) :: acc
     | "B" -> PipelineDesc (Branch, if n > 0 then Fixed n else Inf) :: acc
-    | "D" -> PipelineDesc (NoPipeline, if n > 0 then Fixed n else Inf) :: acc
+    | "U" -> PipelineDesc (NoPipeline, if n > 0 then Fixed n else Inf) :: acc
     | _ -> Printf.fprintf stderr "Error: pipeline mnemonic %s is unknown\n\
                                   \tKnown mnemonics are: I, MC, LS, B, and N\n"
                           p;

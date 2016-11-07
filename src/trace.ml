@@ -153,7 +153,6 @@ object(self)
        let cc = 
          try
            let (i, prev) = List.hd (List.hd history) in
-           Printf.printf "%d %d\n" c prev;
            max c (prev + (*i#latency +*) 1)
          with
            Failure ("hd") -> c
@@ -291,7 +290,11 @@ object(self)
     Hashtbl.iter (
         fun x y -> Printf.fprintf fd "%d %d\n" x (List.length y)
       ) history
-    
+
+
+  method print_counters =
+    Printf.printf "I:%d\tC:%d\tILP:%1.2f\n" instruction_issued execution_cycle_max
+                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
   method pipeline_to_tikz fd =
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
@@ -303,12 +306,12 @@ object(self)
     Printf.fprintf fd "\\end{tikzpicture}\n\\end{document}\n"
 
     
-  method print_instruction_counter =
+  method print_instruction_counter fd =
     Hashtbl.iter (
         fun x y ->
-        Printf.printf "%s\t%d\n" x y
+        Printf.fprintf fd "%s\t%d\n" x y
       ) instruction_counter;
-    Printf.printf "total:\t%d (in %d cycles, namely %1.2f IPC)\n" instruction_issued execution_cycle_max
+    Printf.fprintf fd "total:\t%d (in %d cycles, namely %1.2f IPC)\n" instruction_issued execution_cycle_max
                   ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
 end ;;
@@ -581,14 +584,17 @@ object(self)
              end
     
   method exec breakpoint =
-    let fd = open_out (Cmdline.outfile "analysis.dump") in
+    let fd = open_out (Cmdline.output_file "analysis.dump") in
     let filtered = self#find_breakpoint breakpoint in
     filtered#exec fd;
-    filtered#get_exec_unit#print_instruction_counter;
+    let fd2 = open_out (Cmdline.output_file "instruction.count") in
+    filtered#get_exec_unit#print_instruction_counter fd2;
     close_out fd;
-    let fd = open_out (Cmdline.outfile "ilp.data") in
+    close_out fd2;
+    let fd = open_out (Cmdline.output_file "ilp.data") in
     filtered#get_exec_unit#ilp_data fd;
     close_out fd;
+    filtered#get_exec_unit#print_counters
 
   (*method print_isa = isa#print*)
     
@@ -597,22 +603,22 @@ object(self)
  
 
   method tikz_pipeline name =
-    let fd = open_out (Cmdline.outfile "pipeline.tex") in
+    let fd = open_out (Cmdline.output_file "pipeline.tex") in
     (self#find_breakpoint name)#get_exec_unit#pipeline_to_tikz fd;
     close_out fd
     
   (** Print the function hierarchy *)
   method print_trace name =
-    let fd = open_out (Cmdline.outfile "processed_trace") in
+    let fd = open_out (Cmdline.output_file "processed_trace") in
     (self#find_breakpoint name)#print_trace fd;
     close_out fd
   method print_trace_fn name =
-    let fd = open_out (Cmdline.outfile "cfg.txt") in
+    let fd = open_out (Cmdline.output_file "cfg.txt") in
     (self#find_breakpoint name)#print_trace_fn fd 0;
     close_out fd
 
   method tikz_trace name =
-    let fd = open_out (Cmdline.outfile "rg.tex") in
+    let fd = open_out (Cmdline.output_file "rg.tex") in
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
                        \\tikzset{mynode/.append style={draw=none, rounded corners=1pt}}\n\
                        \\begin{document}\n\
@@ -623,20 +629,20 @@ object(self)
     close_out fd
 
   method dot_trace name =
-    let fd = open_out (Cmdline.outfile "trc.dot") in
+    let fd = open_out (Cmdline.output_file "trc.dot") in
     Printf.fprintf fd "%s\n\
                        node [shape=rectangle, style=rounded]\n" Dot.open_graph;
     (self#find_breakpoint name)#dot_trace None fd;
     Printf.fprintf fd "%s\n" Dot.close_graph;
     close_out fd;
-    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.outfile "trc.dot") (Cmdline.outfile "trc.pdf")
+    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.output_file "trc.dot") (Cmdline.output_file "trc.pdf")
   method dot_trace_fn name =
-    let fd = open_out (Cmdline.outfile "cfg.dot") in
+    let fd = open_out (Cmdline.output_file "cfg.dot") in
     let filtered = self#find_breakpoint name in
     Printf.fprintf fd "%s\n\
                        node [shape=rectangle, style=rounded]\n" Dot.open_graph;
     filtered#dot_trace_fn fd;   
     Printf.fprintf fd "%s\n" Dot.close_graph;
-    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.outfile "cfg.dot") (Cmdline.outfile "cfg.pdf");
+    Printf.printf "\trun <dot -Tpdf %s > %s>\n" (Cmdline.output_file "cfg.dot") (Cmdline.output_file "cfg.pdf");
     close_out fd
 end;;
