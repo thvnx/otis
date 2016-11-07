@@ -10,17 +10,17 @@ xxx10001xxxxxxxxxxxxxxxxxxxxxxxx		Add/subtract (immediate)
 ---100011----------------------- Unallocated
 00010001------------------------ ADD	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
 				 MOV	<Wd|WSP>, <Wn|WSP>
-00110001------------------------ ADDS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
+00110001------------------------ :CondFlagAsOutput: ADDS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
 				 CMN	<Wn|WSP>, #<imm>{, <shift>}
 01010001------------------------ SUB	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
-01110001------------------------ SUBS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
+01110001------------------------ :CondFlagAsOutput: SUBS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
 				 CMP	<Wn|WSP>, #<imm>{, <shift>}
 10010001------------------------ ADD	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
 				 MOV	<Xd|SP>, <Xn|SP>
-10110001------------------------ ADDS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
+10110001------------------------ :CondFlagAsOutput: ADDS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
 				 CMN	<Xn|SP>, #<imm>{, <shift>}
 11010001------------------------ SUB	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
-11110001------------------------ SUBS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
+11110001------------------------ :CondFlagAsOutput: SUBS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
 				 CMP	<Xn|SP>, #<imm>{, <shift>}
 
 xxx100100xxxxxxxxxxxxxxxxxxxxxxx		Logical (immediate)
@@ -29,13 +29,13 @@ xxx100100xxxxxxxxxxxxxxxxxxxxxxx		Logical (immediate)
 0011001000---------------------- ORR	<Wd|WSP>, <Wn>, #<imm>
 				 MOV	<Wd|WSP>, #<imm>
 0101001000---------------------- EOR	<Wd|WSP>, <Wn>, #<imm>
-0111001000---------------------- ANDS	<Wd>, <Wn>, #<imm>
+0111001000---------------------- :CondFlagAsOutput: ANDS	<Wd>, <Wn>, #<imm>
 				 TST	<Wn>, #<imm>
 100100100----------------------- AND	<Xd|SP>, <Xn>, #<imm>
 101100100----------------------- ORR	<Xd|SP>, <Xn>, #<imm>
 				 MOV	<Xd|SP>, #<imm>
 110100100----------------------- EOR	<Xd|SP>, <Xn>, #<imm>
-111100100----------------------- ANDS	<Xd>, <Xn>, #<imm>
+111100100----------------------- :CondFlagAsOutput: ANDS	<Xd>, <Xn>, #<imm>
 				 TST	<Xn>, #<imm>
 
 xxx100101xxxxxxxxxxxxxxxxxxxxxxx		Move wide (immediate)
@@ -103,22 +103,22 @@ xxx100111xxxxxxxxxxxxxxxxxxxxxxx		Extract
 xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instructions
 
 0101010xxxxxxxxxxxxxxxxxxxxxxxxx		Conditional branch (immediate)
-01010100-------------------00000 :Jump: B.EQ	<label>
-01010100-------------------00001 :Jump: B.NE	<label>
-01010100-------------------00010 :Jump: B.CS	<label>
-01010100-------------------00011 :Jump: B.CC	<label>
-01010100-------------------00100 :Jump: B.MI	<label>
-01010100-------------------00101 :Jump: B.PL	<label>
-01010100-------------------00110 :Jump: B.VS	<label>
-01010100-------------------00111 :Jump: B.VC	<label>
-01010100-------------------01000 :Jump: B.HI	<label>
-01010100-------------------01001 :Jump: B.LS	<label>
-01010100-------------------01010 :Jump: B.GE	<label>
-01010100-------------------01011 :Jump: B.LT	<label>
-01010100-------------------01100 :Jump: B.GT	<label>
-01010100-------------------01101 :Jump: B.LE	<label>
-01010100-------------------01110 :Jump: B.AL	<label>
-01010100-------------------01111 :Jump: B.NV	<label>
+01010100-------------------00000 :Jump:CondFlagAsInput: B.EQ	<label>
+01010100-------------------00001 :Jump:CondFlagAsInput: B.NE	<label>
+01010100-------------------00010 :Jump:CondFlagAsInput: B.CS	<label>
+01010100-------------------00011 :Jump:CondFlagAsInput: B.CC	<label>
+01010100-------------------00100 :Jump:CondFlagAsInput: B.MI	<label>
+01010100-------------------00101 :Jump:CondFlagAsInput: B.PL	<label>
+01010100-------------------00110 :Jump:CondFlagAsInput: B.VS	<label>
+01010100-------------------00111 :Jump:CondFlagAsInput: B.VC	<label>
+01010100-------------------01000 :Jump:CondFlagAsInput: B.HI	<label>
+01010100-------------------01001 :Jump:CondFlagAsInput: B.LS	<label>
+01010100-------------------01010 :Jump:CondFlagAsInput: B.GE	<label>
+01010100-------------------01011 :Jump:CondFlagAsInput: B.LT	<label>
+01010100-------------------01100 :Jump:CondFlagAsInput: B.GT	<label>
+01010100-------------------01101 :Jump:CondFlagAsInput: B.LE	<label>
+01010100-------------------01110 :Jump:CondFlagAsInput: B.AL	<label>
+01010100-------------------01111 :Jump:CondFlagAsInput: B.NV	<label>
 01010100-------------------1---- Unallocated
 01010101------------------------ Unallocated
 
@@ -596,9 +596,9 @@ xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 				 MVN	<Wd>, <Wm>{, <shift> #<amount>}
 01001010--0--------------------- EOR	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 01001010--1--------------------- EON	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
-01101010--0--------------------- ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01101010--0--------------------- :CondFlagAsOutput: ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 TST	<Wn>, <Wm>{, <shift> #<amount>}
-01101010--1--------------------- BICS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01101010--1--------------------- :CondFlagAsOutput: BICS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 10001010--0--------------------- AND	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 10001010--1--------------------- BIC	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 10101010--0--------------------- ORR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
@@ -607,27 +607,27 @@ xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 				 MVN	<Xd>, <Xm>{, <shift> #<amount>}
 11001010--0--------------------- EOR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 11001010--1--------------------- EON	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
-11101010--0--------------------- ANDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11101010--0--------------------- :CondFlagAsOutput: ANDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 TST	<Xn>, <Xm>{, <shift> #<amount>}
-11101010--1--------------------- BICS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11101010--1--------------------- :CondFlagAsOutput: BICS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 
 xxx01011xx0xxxxxxxxxxxxxxxxxxxxx		Add/subtract (shifted register)
 ---01011110--------------------- Unallocated
 0--01011--0-----1--------------- Unallocated
 00001011--0--------------------- ADD	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
-00101011--0--------------------- ADDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+00101011--0--------------------- :CondFlagAsOutput: ADDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 CMN	<Wn>, <Wm>{, <shift> #<amount>}
 01001011--0--------------------- SUB	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 NEG	<Wd>, <Wm>{, <shift> #<amount>}
-01101011--0--------------------- SUBS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01101011--0--------------------- :CondFlagAsOutput: SUBS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 CMP	<Wn>, <Wm>{, <shift> #<amount>}
 				 NEGS	<Wd>, <Wm>{, <shift> #<amount>}
 10001011--0--------------------- ADD	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
-10101011--0--------------------- ADDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+10101011--0--------------------- :CondFlagAsOutput: ADDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 CMN	<Xn>, <Xm>{, <shift> #<amount>}
 11001011--0--------------------- SUB	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 NEG	<Xd>, <Xm>{, <shift> #<amount>}
-11101011--0--------------------- SUBS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11101011--0--------------------- :CondFlagAsOutput: SUBS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 CMP	<Xn>, <Xm>{, <shift> #<amount>}
 				 NEGS	<Xd>, <Xm>{, <shift> #<amount>}
 
@@ -637,16 +637,16 @@ xxx01011xx1xxxxxxxxxxxxxxxxxxxxx		Add/subtract (extended register)
 ---01011-11--------------------- Unallocated
 ---010111-1--------------------- Unallocated
 00001011001--------------------- ADD	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
-00101011001--------------------- ADDS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+00101011001--------------------- :CondFlagAsOutput: ADDS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 				 CMN	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 01001011001--------------------- SUB	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
-01101011001--------------------- SUBS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+01101011001--------------------- :CondFlagAsOutput: SUBS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 				 CMP	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 10001011001--------------------- ADD	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
-10101011001--------------------- ADDS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+10101011001--------------------- :CondFlagAsOutput: ADDS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 				 CMN	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
 11001011001--------------------- SUB	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
-11101011001--------------------- SUBS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+11101011001--------------------- :CondFlagAsOutput: SUBS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 				 CMP	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
 
 xxx11010000xxxxxxxxxxxxxxxxxxxxx		Add/subtract (with carry)
@@ -655,25 +655,25 @@ xxx11010010xxxxxxxxx0xxxxxxxxxxx		Conditional compare (register)
 ---11010010---------0------1---- Unallocated
 ---11010010---------01---------- Unallocated
 --011010010---------0----------- Unallocated
-00111010010---------00-----0---- CCMN	<Wn>, <Wm>, #<nzcv>, <cond>
-01111010010---------00-----0---- CCMP	<Wn>, <Wm>, #<nzcv>, <cond>
-10111010010---------00-----0---- CCMN	<Xn>, <Xm>, #<nzcv>, <cond>
-11111010010---------00-----0---- CCMP	<Xn>, <Xm>, #<nzcv>, <cond>
+00111010010---------00-----0---- :CondFlagAsOutput: CCMN	<Wn>, <Wm>, #<nzcv>, <cond>
+01111010010---------00-----0---- :CondFlagAsOutput: CCMP	<Wn>, <Wm>, #<nzcv>, <cond>
+10111010010---------00-----0---- :CondFlagAsOutput: CCMN	<Xn>, <Xm>, #<nzcv>, <cond>
+11111010010---------00-----0---- :CondFlagAsOutput: CCMP	<Xn>, <Xm>, #<nzcv>, <cond>
 
 xxx11010010xxxxxxxxx1xxxxxxxxxxx		Conditional compare (immediate)
 ---11010010---------1------1---- Unallocated
 ---11010010---------11---------- Unallocated
 --011010010---------1----------- Unallocated
-00111010010---------10-----0---- CCMN	<Wn>, #<imm>, #<nzcv>, <cond>
-01111010010---------10-----0---- CCMP	<Wn>, #<imm>, #<nzcv>, <cond>
-10111010010---------10-----0---- CCMN	<Xn>, #<imm>, #<nzcv>, <cond>
-11111010010---------10-----0---- CCMP	<Xn>, #<imm>, #<nzcv>, <cond>
+00111010010---------10-----0---- :CondFlagAsOutput: CCMN	<Wn>, #<imm>, #<nzcv>, <cond>
+01111010010---------10-----0---- :CondFlagAsOutput: CCMP	<Wn>, #<imm>, #<nzcv>, <cond>
+10111010010---------10-----0---- :CondFlagAsOutput: CCMN	<Xn>, #<imm>, #<nzcv>, <cond>
+11111010010---------10-----0---- :CondFlagAsOutput: CCMP	<Xn>, #<imm>, #<nzcv>, <cond>
 
 xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
 ---11010100---------1----------- Unallocated
 --111010100--------------------- Unallocated
 00011010100---------00---------- CSEL	<Wd>, <Wn>, <Wm>, <cond>
-00011010100---------01---------- CSINC	<Wd>, <Wn>, <Wm>, <cond>
+00011010100---------01---------- :CondFlagAsInput: CSINC	<Wd>, <Wn>, <Wm>, <cond>
 				 CINC	<Wd>, <Wn>, <cond>
 				 CSET <Wd>, <cond>
 01011010100---------00---------- CSINV	<Wd>, <Wn>, <Wm>, <cond>
@@ -682,7 +682,7 @@ xxx11010100xxxxxxxxxxxxxxxxxxxxx		Conditional select
 01011010100---------01---------- CSNEG	<Wd>, <Wn>, <Wm>, <cond>
 				 CNEG	<Wd>, <Wn>, <cond>
 10011010100---------00---------- CSEL	<Xd>, <Xn>, <Xm>, <cond>
-10011010100---------01---------- CSINC	<Xd>, <Xn>, <Xm>, <cond>
+10011010100---------01---------- :CondFlagAsInput: CSINC	<Xd>, <Xn>, <Xm>, <cond>
 				 CINC	<Xd>, <Xn>, <cond>
 				 CSET	<Xd>, <cond>
 11011010100---------00---------- CSINV	<Xd>, <Xn>, <Xm>, <cond>
@@ -1256,12 +1256,12 @@ x0x11110xx1xxxxxxx1000xxxxxxxxxx		Floating-point compare
 -0-11110--1-----1-1000---------- Unallocated
 -0-11110101-------1000---------- Unallocated
 -0111110--1-------1000---------- Unallocated
-00011110001-----001000-----00000 FCMP	<Sn>, <Sm>
-00011110001-----001000-----01000 FCMP	<Sn>, #0.0
+00011110001-----001000-----00000 :CondFlagAsOutput: FCMP	<Sn>, <Sm>
+00011110001-----001000-----01000 :CondFlagAsOutput: FCMP	<Sn>, #0.0
 00011110001-----001000-----10000 FCMPE	<Sn>, <Sm>
 00011110001-----001000-----11000 FCMPE	<Sn>, #0.0
-00011110011-----001000-----00000 FCMP	<Dn>, <Dm>
-00011110011-----001000-----01000 FCMP	<Dn>, #0.0
+00011110011-----001000-----00000 :CondFlagAsOutput: FCMP	<Dn>, <Dm>
+00011110011-----001000-----01000 :CondFlagAsOutput: FCMP	<Dn>, #0.0
 00011110011-----001000-----10000 FCMPE	<Dn>, <Dm>
 00011110011-----001000-----11000 FCMPE	<Dn>, #0.0
 10-11110--1-------1000---------- Unallocated

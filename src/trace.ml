@@ -54,6 +54,9 @@ object(self)
   method latency = _pattern#latency
   method pipeline = _pattern#pipeline
 
+  method cond_flag_as_output = _pattern#cond_flag_as_output
+  method cond_flag_as_input = _pattern#cond_flag_as_input
+
   method get_branch_type =
 (*    match _name with
     | "b" | "br" | "b.gt" | "b.eq"
@@ -89,19 +92,23 @@ object(self)
 end;;
 
 
-class pipeline name way =
+class pipeline kind way =
   let wn = match way with Isa.Inf -> -1 | Isa.Fixed n -> n in
+  let str = Isa.pipeline_kind_to_string kind in
   (*let _ = Printf.printf "Pipeline [%d way(s)]\n" wn in*)
 object(self)
   val mutable history = [[]]
 
+  method name = str
+  method nb_of_way = List.length history
+                      
   method add (instr:trace_instruction) c =
     let rec first_available_or_new_pipeline idx p =
       match p with
       | h::t -> begin (* todo: first case is identical to the one of the next function *)
           try
             let (i, n) = List.hd h in
-            if n + i#latency < c then begin
+            if n (*+ i#latency*) < c then begin
               history <- List.mapi ( fun i l -> if i = idx then (instr, c) :: l else l ) history; c end
             else first_available_or_new_pipeline (idx + 1) t
           with
@@ -114,7 +121,7 @@ object(self)
       | h::t -> begin
           try
             let (i, n) = List.hd h in
-            if n + i#latency < c then begin
+            if n (*+ i#latency*) < c then begin
               history <- List.mapi ( fun i l -> if i = idx then (instr, c) :: l else l ) history; c end(* c *)
             else first_available_pipeline (idx + 1) t
           with
@@ -128,37 +135,73 @@ object(self)
            | _ :: [] -> idx
            | _ -> Printf.fprintf stderr "Error: unreachable\n"; raise Exit
          in
-         let pm = (find_min 0 history) in
-         let (im, cm) = List.hd (List.nth history pm) in
-         let c = im#latency + cm + 1 in
-         history <- List.mapi ( fun i l -> if i = pm then (instr, c) :: l else l ) history; c
+         if List.length history < wn then
+           begin
+             history <- history @ [[(instr,c)]]; c
+           end
+         else
+           begin
+             let pm = (find_min 0 history) in
+             let (im, cm) = List.hd (List.nth history pm) in
+             let c = (*im#latency +*) cm + 1 in
+             history <- List.mapi ( fun i l -> if i = pm then (instr, c) :: l else l ) history; c
+           end
     in
     match wn with
     | -1 -> first_available_or_new_pipeline 0 history
-    | 1  -> begin history <- [(instr, c) :: (List.hd history)];
-                  try
-                    let (i, prev) = (List.nth (List.hd history) 1) in
-                    max c (prev + i#latency + 1)
-                  with
-                    Failure ("nth") -> c
-            end
+    | 1  ->
+       let cc = 
+         try
+           let (i, prev) = List.hd (List.hd history) in
+           Printf.printf "%d %d\n" c prev;
+           max c (prev + (*i#latency +*) 1)
+         with
+           Failure ("hd") -> c
+       in
+       history <- [(instr, cc) :: (List.hd history)];
+       cc
     | n -> if n > 1 then
                first_available_pipeline 0 history
            else begin Printf.fprintf stderr "Error: unreachable\n"; raise Exit end
+
+  method to_tikz fd h_offset =
+    
+    List.iteri (
+        fun line ph ->
+        Printf.fprintf fd "\\draw[] (%d,%d) rectangle (%d,%d) node[midway] {%s%d};\n"
+                      0
+                      (line+h_offset)
+                      (-10)
+                      (line+1+h_offset)
+                      (Str.global_replace (Str.regexp "[&]") "\\&" self#name) line;
+        List.iter (
+            fun (i, c) ->
+            (*if c < 100 then*)
+            Printf.fprintf fd "\\draw[mynode] (%d,%d) rectangle (%d,%d) node[midway] {%s};\n"
+                          c
+                          (line+h_offset)
+                          (c + i#latency)
+                          (line+1+h_offset)
+                          i#name;
+          ) (List.rev ph)
+
+      ) history;
+    
        
 end;;
 
   
-class execUnit =
+class execUnit = (* rename it to hardware-model *)
   let _pipelines =
     let t = Hashtbl.create 5 in
-    List.iter ( fun p -> match p with Isa.PipelineDesc (pipe, way) -> Hashtbl.add t pipe (new pipeline pipe way) ) Isa.read_pipeline;
+    List.iter ( fun p -> match p with Isa.PipelineDesc (pipe, way) -> Hashtbl.add t pipe (new pipeline pipe way) ) (Isa.build_pipeline !Cmdline.pipeline_description);
     t in
 object(self)
   
   val mutable instruction_issued = 0
   val mutable execution_cycle = 1
   val mutable execution_cycle_max = 1
+  val mutable last_instruction_writing_cf = None
   val instruction_counter = Hashtbl.create 0
   val registers = Hashtbl.create 0
   val pipelines = _pipelines
@@ -173,8 +216,20 @@ object(self)
       with
         Not_found -> Hashtbl.add history execution_cycle [instr]
     in
-    let history_max_cycle =
+   (* let history_max_cycle =
       execution_cycle_max + 1 (* todo replace +1 by latency of the last instruction which modified condition flags *)
+    in*)
+    let deal_with_cf c =
+      let maxc =
+        if instr#cond_flag_as_input then
+          match last_instruction_writing_cf with
+          | None -> c
+          | Some (iw, cw) -> max c (cw + iw#latency)
+        else c
+      in
+      if instr#cond_flag_as_output then
+        last_instruction_writing_cf <- Some (instr, c);
+      maxc
     in
     let rec read_register r =
       try
@@ -214,11 +269,10 @@ object(self)
 
     
     
-    execution_cycle <- if instr#get_branch_type = Isa.NoBranch then exec_at else (max history_max_cycle exec_at); (* instr can be run at this cyle *)
+    execution_cycle <- (*if instr#get_branch_type = Isa.NoBranch then exec_at else (max history_max_cycle exec_at);*) deal_with_cf exec_at; (* instr can be run at this cyle *)
     execution_cycle <- fill_pipeline instr execution_cycle; (* but we have to take care off pipeline dependancies *)
 
-
-    execution_cycle_max <- max execution_cycle execution_cycle_max;
+    execution_cycle_max <- max (execution_cycle + instr#latency) execution_cycle_max;
     (* update the cycle count of the written parameters *)
     List.iter ( fun i ->
                write_register i
@@ -237,14 +291,25 @@ object(self)
     Hashtbl.iter (
         fun x y -> Printf.fprintf fd "%d %d\n" x (List.length y)
       ) history
+    
 
+  method pipeline_to_tikz fd =
+    Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
+                       \\tikzset{mynode/.append style={draw opacity=.5, fill opacity=.4, fill=red!30, rounded corners=1pt}}\n\
+                       \\begin{document}\n\
+                       \\begin{tikzpicture}[x=10pt, y=10pt, font=\\small]\n";
+    let offset = ref 0 in
+    Hashtbl.iter ( fun _ y -> y#to_tikz fd !offset; offset := !offset + y#nb_of_way ) pipelines;
+    Printf.fprintf fd "\\end{tikzpicture}\n\\end{document}\n"
+
+    
   method print_instruction_counter =
     Hashtbl.iter (
         fun x y ->
         Printf.printf "%s\t%d\n" x y
       ) instruction_counter;
-    Printf.printf "total:\t%d (in %d cycles, namely %1.2f IPC)\n" instruction_issued execution_cycle
-                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle))
+    Printf.printf "total:\t%d (in %d cycles, namely %1.2f IPC)\n" instruction_issued execution_cycle_max
+                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
 end ;;
   
@@ -530,6 +595,11 @@ object(self)
   method print_nb_instruction name =
     Printf.printf "%s: %d\n" name (self#find_breakpoint name)#nb_instruction
  
+
+  method tikz_pipeline name =
+    let fd = open_out (Cmdline.outfile "pipeline.tex") in
+    (self#find_breakpoint name)#get_exec_unit#pipeline_to_tikz fd;
+    close_out fd
     
   (** Print the function hierarchy *)
   method print_trace name =
@@ -549,7 +619,7 @@ object(self)
                        \\begin{tikzpicture}[x=15pt, y=10pt, font=\\small]\n";
     (self#find_breakpoint name)#tikz_trace fd 1 (self#find_breakpoint name)#nb_instruction;
     Printf.fprintf fd "\\end{tikzpicture}\n\
-                       \\end{document}";
+                       \\end{document}\n";
     close_out fd
 
   method dot_trace name =

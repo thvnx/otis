@@ -8,6 +8,7 @@
 %token READ WRITE BASE IMM OPT_READ OPT_IMM
 %token <int> LATENCY
 %token <Isa.branch_t> BRANCH_PROP
+%token COND_FLAG_INPUT COND_FLAG_OUTPUT
 
 
 %start isa
@@ -60,6 +61,8 @@
   property:
     | p = BRANCH_PROP { Isa.BranchProp (p) }
     | p = LATENCY { Isa.Latency (p) }
+    | COND_FLAG_INPUT { Isa.ConditionFlagAsInput }
+    | COND_FLAG_OUTPUT { Isa.ConditionFlagAsOutput }
     ;
 
 

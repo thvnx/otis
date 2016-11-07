@@ -37,3 +37,5 @@ let _ =
   
   if !Cmdline.nb_instruction then trace#print_nb_instruction !Cmdline.breakpoint;
   if !Cmdline.exec then trace#exec !Cmdline.breakpoint;
+
+  if !Cmdline.pipeline_tikz then trace#tikz_pipeline !Cmdline.breakpoint
