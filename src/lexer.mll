@@ -68,6 +68,7 @@ and immediate =
   | eof { raise (SyntaxError ("Immadiate isn't terminated")) }
 and label l =
   parse
+  | '(' [^')']* ')' { label l lexbuf }
   | function_name as fn
                        { (*Printf.printf "function_name: %s\n" fn;*) label (fn, false, None) lexbuf }
   | "@plt" { match l with (f, _, o) -> label (f, true, o) lexbuf }
