@@ -48,7 +48,7 @@ type hardware_model_t = PerfectILP | Custom | CortexA53 | CortexA57 ;;
 
 let hardware_model           = ref PerfectILP ;;
 let hw_model_default_latency = ref 1 ;;
-let pipeline_description     = ref "" ;;
+let pipeline_description     = ref "I0MC0LS0N0B0U0" ;;
 
 (** Set the hardware model execution pipelines properties. Possible
 values are {i Perfect}, {i Cortex-A53}, {i Cortex-A57} or a custom
