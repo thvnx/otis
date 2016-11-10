@@ -91,13 +91,19 @@ let scan_cmd_line =
 
         ("-isa", Arg.Set_string isa_description_file, "<file> Set ISA description file to <file>.");
 
+        ("-trace-dump-all",          Arg.Tuple [(Arg.Set trace_function_graphviz);
+                                                (Arg.Set trace_function_text);
+                                                (Arg.Set trace_function_tex);
+                                                (Arg.Set trace_instruction_text);
+                                                (Arg.Set trace_instruction_graphviz);
+                                                (Arg.Set dump_analysis_pipeline); (Arg.Set trace_run_analysis)], " Set all trace and dump outpus flags.");
         ("-trace-function-graphviz", Arg.Set trace_function_graphviz, " Graphic output (see documentation).");
         ("-trace-function-text",     Arg.Set trace_function_text,     " ASCII output (see documentation).");
         ("-trace-function-tex",      Arg.Set trace_function_tex,      " Graphic output (see documentation).");
         ("-trace-instruction-text",     Arg.Set trace_instruction_text,     " ASCII output (see documentation).");
         ("-trace-instruction-graphviz", Arg.Set trace_instruction_graphviz, " Graphic output (see documentation).");
 
-        ("-dump-analysis-pipeline", Arg.Tuple [(Arg.Set dump_analysis_pipeline); (Arg.Set trace_run_analysis)] , " Graphic output (see documentation).");
+        ("-dump-analysis-pipeline", Arg.Tuple [(Arg.Set dump_analysis_pipeline); (Arg.Set trace_run_analysis)], " Graphic output (see documentation).");
       ]
   in
   Arg.parse scan_options (fun f -> trace_file := f) usage_text;
