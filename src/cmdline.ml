@@ -63,9 +63,11 @@ let set_hardware_model_properties = function
      pipeline_description := "I0MC0LS0N0B0U0"
   | "Cortex-A53" ->
      hardware_model := CortexA53;
+     hw_model_default_latency := 4;
      pipeline_description := "I1MC1LS1N1B1U1"
   | "Cortex-A57" ->
      hardware_model := CortexA57;
+     hw_model_default_latency := 3;
      pipeline_description := "I2MC1LS2N2B1U1"
   | custom ->
      hardware_model := Custom;
