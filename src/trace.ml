@@ -296,6 +296,12 @@ object(self)
     Printf.printf "I:%d\tC:%d\tILP:%1.2f\n" instruction_issued execution_cycle_max
                   ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
+  method yaml_report fd =
+    Printf.fprintf fd "instructions:\t%d\n\
+                       cycles:\t%d\n\
+                       ilp:\t%1.2f\n" instruction_issued execution_cycle_max
+                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
+
   method pipeline_to_tikz fd =
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
                        \\tikzset{mynode/.append style={draw opacity=.5, fill opacity=.4, fill=red!30, rounded corners=1pt}}\n\
@@ -594,8 +600,14 @@ object(self)
     let fd = open_out (Cmdline.output_file "ilp.data") in
     filtered#get_exec_unit#ilp_data fd;
     close_out fd;
-    filtered#get_exec_unit#print_counters
-
+    filtered#get_exec_unit#print_counters;
+    if !Cmdline.yaml_report then
+      begin
+        let fd = open_out (Cmdline.output_file "yml") in
+        filtered#get_exec_unit#yaml_report fd;
+        close_out fd
+      end
+    
   (*method print_isa = isa#print*)
     
   method print_nb_instruction name =
