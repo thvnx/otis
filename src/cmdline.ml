@@ -42,8 +42,8 @@ execution pipelines. Analysis strat point is set by
 [trace_breakpoint]. Implies to set [trace_run_analysis]. *)
 let dump_analysis_pipeline = ref false ;;
 
-(** [yaml_report] outputs an analysis report in YAML. *)
-let yaml_report = ref false ;;
+(** [json_report] outputs an analysis report in JSON. *)
+let json_report = ref false ;;
 
 
 (* Hardware model settings *)
@@ -109,7 +109,7 @@ let scan_cmd_line =
         ("-trace-instruction-graphviz", Arg.Set trace_instruction_graphviz, " Graphic output (see documentation).");
 
         ("-dump-analysis-pipeline", Arg.Tuple [(Arg.Set dump_analysis_pipeline); (Arg.Set trace_run_analysis)], " Graphic output (see documentation).");
-        ("-yaml-report", Arg.Set yaml_report, " Output an analysis report in YAML.");
+        ("-json-report", Arg.Set json_report, " Output an analysis report in YAML.");
       ]
   in
   Arg.parse scan_options (fun f -> trace_file := f) usage_text;

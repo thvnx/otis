@@ -296,11 +296,10 @@ object(self)
     Printf.printf "I:%d\tC:%d\tILP:%1.2f\n" instruction_issued execution_cycle_max
                   ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
-  method yaml_report fd =
-    Printf.fprintf fd "instructions:\t%d\n\
-                       cycles:\t%d\n\
-                       ilp:\t%1.2f\n" instruction_issued execution_cycle_max
-                  ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
+  method json_report fd =
+    Printf.fprintf fd "{\"otis\":{\"instructions\":\"%d\",\"cycles\":\"%d\",\"ilp\":\"%1.2f\"}}\n"
+                   instruction_issued execution_cycle_max
+                   ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
   method pipeline_to_tikz fd =
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
@@ -601,10 +600,10 @@ object(self)
     filtered#get_exec_unit#ilp_data fd;
     close_out fd;
     filtered#get_exec_unit#print_counters;
-    if !Cmdline.yaml_report then
+    if !Cmdline.json_report then
       begin
-        let fd = open_out (Cmdline.output_file "yml") in
-        filtered#get_exec_unit#yaml_report fd;
+        let fd = open_out (Cmdline.output_file "json") in
+        filtered#get_exec_unit#json_report fd;
         close_out fd
       end
     
