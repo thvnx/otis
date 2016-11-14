@@ -2,10 +2,12 @@
   open Parser
   open Lexing
   exception SyntaxError of string
+
+  let cpp_type_depth = ref 0
 }
 
 let hexa_number = "0x" ['0'-'9''a'-'f']+
-let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.']*
+let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.''('')'':''&''*'','' ']*
 let instruction_name = ' ' ['.''a'-'z']+ ['1''2']?
 let register_name = ['x''w''q''d''v''s']
 let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0"             
@@ -68,13 +70,14 @@ and immediate =
   | eof { raise (SyntaxError ("Immadiate isn't terminated")) }
 and label l =
   parse
-  | '(' [^')']* ')' { label l lexbuf }
-  | function_name as fn
-                       { (*Printf.printf "function_name: %s\n" fn;*) label (fn, false, None) lexbuf }
+(*| '(' [^')']* ')' { label l lexbuf }*)
+  | '<' { cpp_type_depth := !cpp_type_depth + 1; label l lexbuf }
+  | function_name | ['('':'' '',''&'')'] as fn
+                       { (*Printf.printf "function_name: %s\n" fn;*) if !cpp_type_depth = 0 then label (fn, false, None) lexbuf else label l lexbuf }
   | "@plt" { match l with (f, _, o) -> label (f, true, o) lexbuf }
   | '+' { label l lexbuf }
   | ['0'-'9']* as i
                  { match l with (f, p, _) -> label (f, p, Some (int_of_string i)) lexbuf }
-  | '>' { LABEL (l) }
+  | '>' { if !cpp_type_depth > 0 then begin cpp_type_depth := !cpp_type_depth - 1; label l lexbuf end else LABEL (l) }
   | _ { raise   (SyntaxError ("Illegal character label")) }
   | eof { raise (SyntaxError ("Label isn't terminated")) }
