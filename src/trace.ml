@@ -297,7 +297,7 @@ object(self)
                   ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
   method json_report fd =
-    Printf.fprintf fd "{\"otis\":{\"instructions\":\"%d\",\"cycles\":\"%d\",\"ilp\":\"%1.2f\"}}\n"
+    Printf.fprintf fd "{\"otis\":{\"instructions\":%d,\"cycles\":%d,\"ilp\":%e}}\n"
                    instruction_issued execution_cycle_max
                    ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
