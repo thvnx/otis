@@ -67,7 +67,7 @@ class instruction ?alias_of _op _name _params _properties =
          Printf.fprintf stderr "Warning: insrtruction %s [%s] hasn't latency property defined (returing %d by default)\n" _name _op !Cmdline.hw_model_default_latency; !Cmdline.hw_model_default_latency
     in if !Cmdline.hardware_model = Cmdline.PerfectILP then !Cmdline.hw_model_default_latency else p _properties (* todo improve hardware model detection *)
   in
-  let _pipeline = 
+  let _pipeline = (* todo: take into account several pipeline *)
     let rec p l =
       match l with
       | (Pipeline p)::t -> p
