@@ -219,16 +219,15 @@ object(self)
       execution_cycle_max + 1 (* todo replace +1 by latency of the last instruction which modified condition flags *)
     in*)
     let deal_with_cf c =
-      let maxc =
-        if instr#cond_flag_as_input then
-          match last_instruction_writing_cf with
-          | None -> c
-          | Some (iw, cw) -> max c (cw + iw#latency)
-        else c
-      in
+      if instr#cond_flag_as_input then
+        match last_instruction_writing_cf with
+        | None -> c
+        | Some (iw, cw) -> max c (cw + iw#latency)
+      else c
+    in
+    let update_cf c =
       if instr#cond_flag_as_output then
-        last_instruction_writing_cf <- Some (instr, c);
-      maxc
+        last_instruction_writing_cf <- Some (instr, c)
     in
     let rec read_register r =
       try
@@ -271,6 +270,8 @@ object(self)
     execution_cycle <- (*if instr#get_branch_type = Isa.NoBranch then exec_at else (max history_max_cycle exec_at);*) deal_with_cf exec_at; (* instr can be run at this cyle *)
     execution_cycle <- fill_pipeline instr execution_cycle; (* but we have to take care off pipeline dependancies *)
 
+    update_cf execution_cycle;
+    
     execution_cycle_max <- max (execution_cycle + instr#latency) execution_cycle_max;
     (* update the cycle count of the written parameters *)
     List.iter ( fun i ->
@@ -280,10 +281,13 @@ object(self)
 
     update_history;
     
-    Printf.fprintf fd "%6s, r: %12s, w: %8s\texecuted at cycle: %d/%d\n"
+    Printf.fprintf fd "%6s, r: %12s, w: %8s, cf: %s\texecuted at cycle: %d/%d\n"
                    instr#name
                    (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#reads_param)))
                    (String.concat ";" (List.concat (List.map (fun i -> Aarch64.parameter_register_id i) instr#writes_param)))
+                   (match instr#cond_flag_as_input, instr#cond_flag_as_output with
+                    | true, true -> "rw" | false, false -> "  "
+                    | true, false -> "r " | false, true -> " w")
                    execution_cycle execution_cycle_max
     
   method ilp_data fd =
