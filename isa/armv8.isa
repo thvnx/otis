@@ -747,7 +747,17 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 01111110xx10100xxxxx10xxxxxxxxxx		Unallocated
 01111110xx0xxxxx0xxxx0xxxxxxxxxx		Unallocated
 01x11110xx10100xxxxx10xxxxxxxxxx		Unallocated
+
 01x11110000xxxxx0xxxx1xxxxxxxxxx		Advanced SIMD scalar copy
+01011110000-----0---11---------- Unallocated
+01011110000-----0--1-1---------- Unallocated
+01011110000-----0-1--1---------- Unallocated
+01011110000-----000001---------- DUP	<V><d>, <Vn>.<T>[<index>]
+				 MOV	<V><d>, <Vn>.<T>[<index>]
+01011110000-----01---1---------- Unallocated
+01011110000-0000000001---------- Unallocated
+01111110000-----0----1---------- Unallocated
+
 01x111101x0xxxxx0xxxx1xxxxxxxxxx		Unallocated
 01x11110x011100xxxxx10xxxxxxxxxx		Unallocated
 
