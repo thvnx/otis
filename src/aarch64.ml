@@ -244,7 +244,7 @@ let build_register ?n ?vr ?ve ?i r =
   | "sp" -> SP
   | "wzr" -> Wzr
   | "xzr" -> Xzr
-  | "fpcr" | "tpidr_el0" -> MiscR (r)
+  | "fpcr" | "tpidr_el0" | "pldl1keep" -> MiscR (r)
   | _ -> Printf.fprintf stderr "Error: pattern matching failed on: %s (%s)\n" r __LOC__; 
          raise Exit
                           

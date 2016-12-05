@@ -7,10 +7,10 @@
 }
 
 let hexa_number = "0x" ['0'-'9''a'-'f']+
-let function_name = ['_''a'-'z''A'-'Z'] ['_''a'-'z''A'-'Z''0'-'9''.''('')'':''&''*'','' ']*
+let function_name = ['_''a'-'z''A'-'Z'] (['_''a'-'z''A'-'Z''0'-'9''.''('')'':''&''*'','' '] | "operator<<")*
 let instruction_name = ' ' ['.''a'-'z']+ ['1''2']?
 let register_name = ['x''w''q''d''v''s']
-let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0"             
+let special_register = "sp" | "xzr" | "wzr" | "fpcr" | "tpidr_el0" | "pldl1keep"           
 let integer = ['+''-']? ['0'-'9']+
 let shift = ("ls" ['r''l']) | "asr"
 let vector_register = '.' ("1"|"2"|"4"|"8"|"16") ['b''h''s''d']
