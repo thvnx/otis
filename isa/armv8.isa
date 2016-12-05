@@ -312,7 +312,17 @@ xx001000xxxxxxxxxxxxxxxxxxxxxxxx		Load/store exclusive
 11001000110-----1--------------- LDAR	<Xt>, [<Xn|SP>{,#0}]
 
 xx001001xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
+
 xx011x00xxxxxxxxxxxxxxxxxxxxxxxx		Load register (literal)
+00011000------------------------ LDR	<Wt>, <label>
+00011100------------------------ LDR	<St>, <label>
+01011000------------------------ LDR	<Xt>, <label>
+01011100------------------------ LDR	<Dt>, <label>
+10011000------------------------ LDRSW	<Xt>, <label>
+10011100------------------------ LDR	<Qt>, <label>
+11011000------------------------ PRFM	(<prfop>|#<imm5>), <label>
+11011100------------------------ Unallocated
+
 xx011x01xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
 xx101x000xxxxxxxxxxxxxxxxxxxxxxx		Load/store no-allocate pair (offset)
 
