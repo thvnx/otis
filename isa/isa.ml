@@ -26,6 +26,15 @@ let pipeline_kind_to_string p =
   | Neon -> "FP&SIMD"
   | Branch -> "Branch"
   | NoPipeline -> "Undefined"
+
+let pipeline_tikz_color p =
+  match p with
+  | Integer -> "cyan"
+  | MultiCycle -> "orange"
+  | LoadStore -> "brown"
+  | Neon -> "gray"
+  | Branch -> "purple"
+  | NoPipeline -> "red"
                 
 let param_to_string l =
   let rec stos e =

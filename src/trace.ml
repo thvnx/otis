@@ -69,7 +69,7 @@ object(self)
   method iter =
     nb_called <- nb_called + 1
 
-
+  method tikz_color:string = Isa.pipeline_tikz_color self#pipeline
   method to_string = _str
     
 end;;
@@ -176,7 +176,8 @@ object(self)
         List.iter (
             fun (i, c) ->
             (*if c < 100 then*)
-            Printf.fprintf fd "\\draw[mynode] (%d,%d) rectangle (%d,%d) node[midway] {%s};\n"
+            Printf.fprintf fd "\\draw[mynode, fill=%s] (%d,%d) rectangle (%d,%d) node[midway, white] {%s};\n"
+                           i#tikz_color
                           c
                           (line+h_offset)
                           (c + i#latency)
@@ -305,9 +306,9 @@ object(self)
                    instruction_issued execution_cycle_max
                    ((float_of_int instruction_issued) /. (float_of_int execution_cycle_max))
 
-  method pipeline_to_tikz fd =
+  method pipeline_to_tikz fd = (*draw opacity=.5, fill opacity=.4 *)
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
-                       \\tikzset{mynode/.append style={draw opacity=.5, fill opacity=.4, fill=red!30, rounded corners=1pt}}\n\
+                       \\tikzset{mynode/.append style={rounded corners=1pt}}\n\
                        \\begin{document}\n\
                        \\begin{tikzpicture}[x=10pt, y=10pt, font=\\small]\n";
     let offset = ref 0 in
@@ -422,7 +423,7 @@ object(self)
     in
     
     Printf.fprintf fd "\\draw[mynode, fill=blue!%d] (%f,%d) rectangle (%f,%d) node[midway] {%s};\n"
-                   (self#depth*10) (scaling n) self#depth (scaling (n + self#nb_instruction)) (self#depth + 1) (Str.global_replace (Str.regexp "_") "\\_" name)
+                   (self#depth*10) (scaling n) self#depth (scaling (n + self#nb_instruction)) (self#depth + 1) (Str.global_replace (Str.regexp "_") "\\_" (Printf.sprintf "%s[%d]" name self#nb_instruction))
     ;
    
     prt n (List.rev trace2)
@@ -637,7 +638,7 @@ object(self)
     Printf.fprintf fd "\\documentclass[tikz]{standalone}\n\
                        \\tikzset{mynode/.append style={draw=none, rounded corners=1pt}}\n\
                        \\begin{document}\n\
-                       \\begin{tikzpicture}[x=15pt, y=10pt, font=\\small]\n";
+                       \\begin{tikzpicture}[x=10pt, y=13pt, font=\\small]\n";
     (self#find_breakpoint name)#tikz_trace fd 1 (self#find_breakpoint name)#nb_instruction;
     Printf.fprintf fd "\\end{tikzpicture}\n\
                        \\end{document}\n";
