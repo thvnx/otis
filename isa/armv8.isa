@@ -3,8 +3,8 @@ xxx00xxxxxxxxxxxxxxxxxxxxxxxxxxx	Unallocated
 xxx100xxxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - immediate
 
 xxx10000xxxxxxxxxxxxxxxxxxxxxxxx		PC-rel. addressing
-0--10000------------------------ ADR	<Xd>, <label>
-1--10000------------------------ ADRP	<Xd>, <label>
+0--10000------------------------ :Integer: ADR	<Xd>, <label>
+1--10000------------------------ :Integer: ADRP	<Xd>, <label>
 
 xxx10001xxxxxxxxxxxxxxxxxxxxxxxx		Add/subtract (immediate)
 ---100011----------------------- Unallocated
@@ -12,26 +12,26 @@ xxx10001xxxxxxxxxxxxxxxxxxxxxxxx		Add/subtract (immediate)
 				 MOV	<Wd|WSP>, <Wn|WSP>
 00110001------------------------ :CondFlagAsOutput: ADDS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
 				 CMN	<Wn|WSP>, #<imm>{, <shift>}
-01010001------------------------ SUB	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
+01010001------------------------ :MultiCycle: SUB	<Wd|WSP>, <Wn|WSP>, #<imm>{, <shift>}
 01110001------------------------ :CondFlagAsOutput:Integer: SUBS	<Wd>, <Wn|WSP>, #<imm>{, <shift>}
 				 CMP	<Wn|WSP>, #<imm>{, <shift>}
 10010001------------------------ :Integer: ADD	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
 				 MOV	<Xd|SP>, <Xn|SP>
 10110001------------------------ :CondFlagAsOutput: ADDS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
 				 CMN	<Xn|SP>, #<imm>{, <shift>}
-11010001------------------------ SUB	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
+11010001------------------------ :MultiCycle: SUB	<Xd|SP>, <Xn|SP>, #<imm>{, <shift>}
 11110001------------------------ :CondFlagAsOutput:Integer: SUBS	<Xd>, <Xn|SP>, #<imm>{, <shift>}
 				 CMP	<Xn|SP>, #<imm>{, <shift>}
 
 xxx100100xxxxxxxxxxxxxxxxxxxxxxx		Logical (immediate)
 0--1001001---------------------- Unallocated
-0001001000---------------------- AND	<Wd|WSP>, <Wn>, #<imm>
+0001001000---------------------- :Integer: AND	<Wd|WSP>, <Wn>, #<imm>
 0011001000---------------------- :Integer: ORR	<Wd|WSP>, <Wn>, #<imm>
 				 MOV	<Wd|WSP>, #<imm>
 0101001000---------------------- EOR	<Wd|WSP>, <Wn>, #<imm>
 0111001000---------------------- :CondFlagAsOutput:Integer: ANDS	<Wd>, <Wn>, #<imm>
 				 TST	<Wn>, #<imm>
-100100100----------------------- AND	<Xd|SP>, <Xn>, #<imm>
+100100100----------------------- :Integer: AND	<Xd|SP>, <Xn>, #<imm>
 101100100----------------------- :Integer: ORR	<Xd|SP>, <Xn>, #<imm>
 				 MOV	<Xd|SP>, #<imm>
 110100100----------------------- EOR	<Xd|SP>, <Xn>, #<imm>
@@ -45,17 +45,17 @@ xxx100101xxxxxxxxxxxxxxxxxxxxxxx		Move wide (immediate)
 				 MOV	<Wd>, #<imm>
 010100101----------------------- :Integer: MOVZ	<Wd>, #<imm>{, LSL #<shift>}
 				 MOV	<Wd>, #<imm>
-011100101----------------------- MOVK	<Wd>, #<imm>{, LSL #<shift>}
+011100101----------------------- :Integer: MOVK	<Wd>, #<imm>{, LSL #<shift>}
 100100101----------------------- :Integer: MOVN	<Xd>, #<imm>{, LSL #<shift>}
 				 MOV	<Xd>, #<imm>
 110100101----------------------- :Integer: MOVZ	<Xd>, #<imm>{, LSL #<shift>}
 				 MOV	<Xd>, #<imm>
-111100101----------------------- MOVK	<Xd>, #<imm>{, LSL #<shift>}
+111100101----------------------- :Integer: MOVK	<Xd>, #<imm>{, LSL #<shift>}
 
 xxx100110xxxxxxxxxxxxxxxxxxxxxxx		Bitfield
 -11100110----------------------- Unallocated
 0--1001101---------------------- Unallocated
-0001001100---------------------- SBFM	<Wd>, <Wn>, #<immr>, #<imms>
+0001001100---------------------- :Integer: SBFM	<Wd>, <Wn>, #<immr>, #<imms>
 				 ASR	<Wd>, <Wn>, #<shift>
 				 SBFIZ	<Wd>, <Wn>, #<lsb>, #<width>
 				 SBFX	<Wd>, <Wn>, #<lsb>, #<width>
@@ -72,7 +72,7 @@ xxx100110xxxxxxxxxxxxxxxxxxxxxxx		Bitfield
 				 UXTB	<Wd>, <Wn>
 				 UXTH	<Wd>, <Wn>
 1--1001100---------------------- Unallocated
-1001001101---------------------- SBFM	<Xd>, <Xn>, #<immr>, #<imms>
+1001001101---------------------- :Integer: SBFM	<Xd>, <Xn>, #<immr>, #<imms>
 				 ASR	<Xd>, <Xn>, #<shift>
 				 SBFIZ	<Xd>, <Xn>, #<lsb>, #<width>
 				 SBFX	<Xd>, <Xn>, #<lsb>, #<width>
@@ -201,20 +201,20 @@ xxx101xxxxxxxxxxxxxxxxxxxxxxxxxx	Branches, exception generating and system instr
 11010111------------------------ Unallocated
 
 x00101xxxxxxxxxxxxxxxxxxxxxxxxxx		Unconditional branch (immediate)
-000101-------------------------- :Jump: B	<label>
-100101-------------------------- :Call: BL	<label>
+000101-------------------------- :Branch:Jump: B	<label>
+100101-------------------------- :Integer:Branch:Call: BL	<label>
 
 x011010xxxxxxxxxxxxxxxxxxxxxxxxx		Compare & branch (immediate)
-00110100------------------------ :Jump: CBZ	<Wt>, <label>
-00110101------------------------ :Jump: CBNZ	<Wt>, <label>
-10110100------------------------ :Jump: CBZ	<Xt>, <label>
-10110101------------------------ :Jump: CBNZ	<Xt>, <label>
+00110100------------------------ :Branch:Jump: CBZ	<Wt>, <label>
+00110101------------------------ :Branch:Jump: CBNZ	<Wt>, <label>
+10110100------------------------ :Branch:Jump: CBZ	<Xt>, <label>
+10110101------------------------ :Branch:Jump: CBNZ	<Xt>, <label>
 
 x011011xxxxxxxxxxxxxxxxxxxxxxxxx		Test & branch (immediate)
-00110110------------------------ :Jump: TBZ	<Wt>, #<imm>, <label>
-00110111------------------------ :Jump: TBNZ	<Wt>, #<imm>, <label>
-10110110------------------------ :Jump: TBZ	<Xt>, #<imm>, <label>
-10110111------------------------ :Jump: TBNZ	<Xt>, #<imm>, <label>
+00110110------------------------ :Branch:Jump: TBZ	<Wt>, #<imm>, <label>
+00110111------------------------ :Branch:Jump: TBNZ	<Wt>, #<imm>, <label>
+10110110------------------------ :Branch:Jump: TBZ	<Xt>, #<imm>, <label>
+10110111------------------------ :Branch:Jump: TBNZ	<Xt>, #<imm>, <label>
 
 x11101xxxxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
 
@@ -353,48 +353,48 @@ xx011x01xxxxxxxxxxxxxxxxxxxxxxxx		Unallocated
 xx101x000xxxxxxxxxxxxxxxxxxxxxxx		Load/store no-allocate pair (offset)
 
 xx101x001xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (post-indexed)
-0010100010---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
-0010100011---------------------- :LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
-0010110010---------------------- STP	<St1>, <St2>, [<Xn|SP>], #<imm>
-0010110011---------------------- :LoadStore: LDP	<St1>, <St2>, [<Xn|SP>], #<imm>
+0010100010---------------------- :Integer:LoadStore: STP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
+0010100011---------------------- :Integer:LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>], #<imm>
+0010110010---------------------- :Integer:LoadStore: STP	<St1>, <St2>, [<Xn|SP>], #<imm>
+0010110011---------------------- :Integer:LoadStore: LDP	<St1>, <St2>, [<Xn|SP>], #<imm>
 0110100010---------------------- Unallocated
 0110100011---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
-0110110010---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
-0110110011---------------------- :LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
-1010100010---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
-1010100011---------------------- :LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
-1010110010---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
-1010110011---------------------- :LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
+0110110010---------------------- :Integer:LoadStore: STP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
+0110110011---------------------- :Integer:LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>], #<imm>
+1010100010---------------------- :Integer:LoadStore: STP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
+1010100011---------------------- :Integer:LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>], #<imm>
+1010110010---------------------- :Integer:LoadStore: STP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
+1010110011---------------------- :Integer:LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>], #<imm>
 11101-001----------------------- Unallocated
 
 xx101x010xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (offset)
-0010100100---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
-0010100101---------------------- :LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
-0010110100---------------------- STP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
-0010110101---------------------- :LoadStore: LDP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
+0010100100---------------------- :Integer:LoadStore: STP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
+0010100101---------------------- :Integer:LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>{, #<imm>}]
+0010110100---------------------- :Integer:LoadStore: STP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
+0010110101---------------------- :Integer:LoadStore: LDP	<St1>, <St2>, [<Xn|SP>{, #<imm>}]
 0110100100---------------------- Unallocated
 0110100101---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
-0110110100---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
-0110110101---------------------- :LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
-1010100100---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
-1010100101---------------------- :LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
-1010110100---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
-1010110101---------------------- :LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
+0110110100---------------------- :Integer:LoadStore: STP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
+0110110101---------------------- :Integer:LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>{, #<imm>}]
+1010100100---------------------- :Integer:LoadStore: STP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
+1010100101---------------------- :Integer:LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>{, #<imm>}]
+1010110100---------------------- :Integer:LoadStore: STP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
+1010110101---------------------- :Integer:LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>{, #<imm>}]
 11101-010----------------------- Unallocated
 
 xx101x011xxxxxxxxxxxxxxxxxxxxxxx		Load/store register pair (pre-indexed)
-0010100110---------------------- STP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
-0010100111---------------------- :LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
-0010110110---------------------- STP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
-0010110111---------------------- :LoadStore: LDP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
+0010100110---------------------- :Integer:LoadStore: STP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
+0010100111---------------------- :Integer:LoadStore: LDP	<Wt1>, <Wt2>, [<Xn|SP>, #<imm>]!
+0010110110---------------------- :Integer:LoadStore: STP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
+0010110111---------------------- :Integer:LoadStore: LDP	<St1>, <St2>, [<Xn|SP>, #<imm>]!
 0110100110---------------------- Unallocated
 0110100111---------------------- LDPSW	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
-0110110110---------------------- STP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
-0110110111---------------------- :LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
-1010100110---------------------- STP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
-1010100111---------------------- :LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
-1010110110---------------------- STP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
-1010110111---------------------- :LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
+0110110110---------------------- :Integer:LoadStore: STP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
+0110110111---------------------- :Integer:LoadStore: LDP	<Dt1>, <Dt2>, [<Xn|SP>, #<imm>]!
+1010100110---------------------- :Integer:LoadStore: STP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
+1010100111---------------------- :Integer:LoadStore: LDP	<Xt1>, <Xt2>, [<Xn|SP>, #<imm>]!
+1010110110---------------------- :Integer:LoadStore: STP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
+1010110111---------------------- :Integer:LoadStore: LDP	<Qt1>, <Qt2>, [<Xn|SP>, #<imm>]!
 11101-011----------------------- Unallocated
 
 xx111x00xx0xxxxxxxxx00xxxxxxxxxx		Load/store register (unscaled immediate)
@@ -432,27 +432,27 @@ xx111x00xx0xxxxxxxxx01xxxxxxxxxx		Load/store register (immediate post-indexed)
 00111000010---------01---------- LDRB	<Wt>, [<Xn|SP>], #<simm>
 00111000100---------01---------- LDRSB	<Xt>, [<Xn|SP>], #<simm>
 00111000110---------01---------- LDRSB	<Wt>, [<Xn|SP>], #<simm>
-00111100000---------01---------- STR	<Bt>, [<Xn|SP>], #<simm>
+00111100000---------01---------- :Integer:LoadStore: STR	<Bt>, [<Xn|SP>], #<simm>
 00111100010---------01---------- :Integer:LoadStore: LDR	<Bt>, [<Xn|SP>], #<simm>
-00111100100---------01---------- STR	<Qt>, [<Xn|SP>], #<simm>
+00111100100---------01---------- :Integer:LoadStore: STR	<Qt>, [<Xn|SP>], #<simm>
 00111100110---------01---------- :Integer:LoadStore: LDR	<Qt>, [<Xn|SP>], #<simm>
 01111000000---------01---------- STRH	<Wt>, [<Xn|SP>], #<simm>
 01111000010---------01---------- LDRH	<Wt>, [<Xn|SP>], #<simm>
 01111000100---------01---------- LDRSH	<Xt>, [<Xn|SP>], #<simm>
 01111000110---------01---------- LDRSH	<Wt>, [<Xn|SP>], #<simm>
-01111100000---------01---------- STR	<Ht>, [<Xn|SP>], #<simm>
+01111100000---------01---------- :Integer:LoadStore: STR	<Ht>, [<Xn|SP>], #<simm>
 01111100010---------01---------- :Integer:LoadStore: LDR	<Ht>, [<Xn|SP>], #<simm>
 1-111000110---------01---------- Unallocated
 1-1111001-0---------01---------- Unallocated
-10111000000---------01---------- STR	<Wt>, [<Xn|SP>], #<simm>
+10111000000---------01---------- :Integer:LoadStore: STR	<Wt>, [<Xn|SP>], #<simm>
 10111000010---------01---------- :Integer:LoadStore: LDR	<Wt>, [<Xn|SP>], #<simm>
 10111000100---------01---------- LDRSW	<Xt>, [<Xn|SP>], #<simm>
-10111100000---------01---------- STR	<St>, [<Xn|SP>], #<simm>
+10111100000---------01---------- :Integer:LoadStore: STR	<St>, [<Xn|SP>], #<simm>
 10111100010---------01---------- :Integer:LoadStore: LDR	<St>, [<Xn|SP>], #<simm>
-11111000000---------01---------- STR	<Xt>, [<Xn|SP>], #<simm>
+11111000000---------01---------- :Integer:LoadStore: STR	<Xt>, [<Xn|SP>], #<simm>
 11111000010---------01---------- :Integer:LoadStore: LDR	<Xt>, [<Xn|SP>], #<simm>
 11111000100---------01---------- Unallocated
-11111100000---------01---------- STR	<Dt>, [<Xn|SP>], #<simm>
+11111100000---------01---------- :Integer:LoadStore: STR	<Dt>, [<Xn|SP>], #<simm>
 11111100010---------01---------- :Integer:LoadStore: LDR	<Dt>, [<Xn|SP>], #<simm>
 
 xx111x00xx0xxxxxxxxx10xxxxxxxxxx		Load/store register (unprivileged)
@@ -463,27 +463,27 @@ xx111x00xx0xxxxxxxxx11xxxxxxxxxx		Load/store register (immediate pre-indexed)
 00111000010---------11---------- LDRB	<Wt>, [<Xn|SP>, #<simm>]!
 00111000100---------11---------- LDRSB	<Xt>, [<Xn|SP>, #<simm>]!
 00111000110---------11---------- LDRSB	<Wt>, [<Xn|SP>, #<simm>]!
-00111100000---------11---------- STR	<Bt>, [<Xn|SP>, #<simm>]!
+00111100000---------11---------- :Integer:LoadStore: STR	<Bt>, [<Xn|SP>, #<simm>]!
 00111100010---------11---------- :Integer:LoadStore: LDR	<Bt>, [<Xn|SP>, #<simm>]!
-00111100100---------11---------- STR	<Qt>, [<Xn|SP>, #<simm>]!
+00111100100---------11---------- :Integer:LoadStore: STR	<Qt>, [<Xn|SP>, #<simm>]!
 00111100110---------11---------- :Integer:LoadStore: LDR	<Qt>, [<Xn|SP>, #<simm>]!
 01111000000---------11---------- STRH	<Wt>, [<Xn|SP>, #<simm>]!
 01111000010---------11---------- LDRH	<Wt>, [<Xn|SP>, #<simm>]!
 01111000100---------11---------- LDRSH	<Xt>, [<Xn|SP>, #<simm>]!
 01111000110---------11---------- LDRSH	<Wt>, [<Xn|SP>, #<simm>]!
-01111100000---------11---------- STR	<Ht>, [<Xn|SP>, #<simm>]!
+01111100000---------11---------- :Integer:LoadStore: STR	<Ht>, [<Xn|SP>, #<simm>]!
 01111100010---------11---------- :Integer:LoadStore: LDR	<Ht>, [<Xn|SP>, #<simm>]!
 1-111000110---------11---------- Unallocated
 1-1111001-0---------11---------- Unallocated
-10111000000---------11---------- STR	<Wt>, [<Xn|SP>, #<simm>]!
+10111000000---------11---------- :Integer:LoadStore: STR	<Wt>, [<Xn|SP>, #<simm>]!
 10111000010---------11---------- :Integer:LoadStore: LDR	<Wt>, [<Xn|SP>, #<simm>]!
 10111000100---------11---------- LDRSW	<Xt>, [<Xn|SP>, #<simm>]!
-10111100000---------11---------- STR	<St>, [<Xn|SP>, #<simm>]!
+10111100000---------11---------- :Integer:LoadStore: STR	<St>, [<Xn|SP>, #<simm>]!
 10111100010---------11---------- :Integer:LoadStore: LDR	<St>, [<Xn|SP>, #<simm>]!
-11111000000---------11---------- STR	<Xt>, [<Xn|SP>, #<simm>]!
+11111000000---------11---------- :Integer:LoadStore: STR	<Xt>, [<Xn|SP>, #<simm>]!
 11111000010---------11---------- :Integer:LoadStore: LDR	<Xt>, [<Xn|SP>, #<simm>]!
 11111000100---------11---------- Unallocated
-11111100000---------11---------- STR	<Dt>, [<Xn|SP>, #<simm>]!
+11111100000---------11---------- :Integer:LoadStore: STR	<Dt>, [<Xn|SP>, #<simm>]!
 11111100010---------11---------- :Integer:LoadStore: LDR	<Dt>, [<Xn|SP>, #<simm>]!
 
 xx111x00xx1xxxxxxxxx00xxxxxxxxxx		Unallocated
@@ -500,29 +500,29 @@ xx111x00xx1xxxxxxxxx10xxxxxxxxxx		Load/store register (register offset)
 00111000101-----011-10---------- LDRSB	<Xt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
 00111000111-----!=(011)-10---------- LDRSB	<Wt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
 00111000111-----011-10---------- LDRSB	<Wt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
-00111100001-----!=(011)-10---------- STR	<Bt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
-00111100001-----011-10---------- STR	<Bt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
+00111100001-----!=(011)-10---------- :LoadStore: STR	<Bt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
+00111100001-----011-10---------- :LoadStore: STR	<Bt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
 00111100011-----!=(011)-10---------- :Integer:LoadStore: LDR	<Bt>, [<Xn|SP>, (<Wm>|<Xm>), <extend> {<amount>}]
 00111100011-----011-10---------- :Integer:LoadStore: LDR	<Bt>, [<Xn|SP>, <Xm>{, LSL <amount>}]
-00111100101---------10---------- STR	<Qt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+00111100101---------10---------- :LoadStore: STR	<Qt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 00111100111---------10---------- :Integer:LoadStore: LDR	<Qt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 01111000001---------10---------- STRH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 01111000011---------10---------- LDRH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 01111000101---------10---------- LDRSH	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 01111000111---------10---------- LDRSH	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
-01111100001---------10---------- STR	<Ht>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+01111100001---------10---------- :LoadStore: STR	<Ht>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 01111100011---------10---------- :LoadStore: LDR	<Ht>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 1-111000111---------10---------- Unallocated
 1-1111001-1---------10---------- Unallocated
-10111000001---------10---------- STR	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111000001---------10---------- :LoadStore: STR	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 10111000011---------10---------- :LoadStore: LDR	<Wt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 10111000101---------10---------- LDRSW	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
-10111100001---------10---------- STR	<St>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+10111100001---------10---------- :LoadStore: STR	<St>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 10111100011---------10---------- :LoadStore: LDR	<St>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
-11111000001---------10---------- STR	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111000001---------10---------- :LoadStore: STR	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 11111000011---------10---------- :LoadStore: LDR	<Xt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 11111000101---------10---------- PRFM	(<prfop>|#<imm5>), [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
-11111100001---------10---------- STR	<Dt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
+11111100001---------10---------- :LoadStore: STR	<Dt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 11111100011---------10---------- :LoadStore: LDR	<Dt>, [<Xn|SP>, (<Wm>|<Xm>){, <extend> {<amount>}}]
 
 xx111x00xx1xxxxxxxxx11xxxxxxxxxx		Unallocated
@@ -533,27 +533,27 @@ xx111x01xxxxxxxxxxxxxxxxxxxxxxxx		Load/store register (unsigned immediate)
 0011100101---------------------- LDRB	<Wt>, [<Xn|SP>{, #<pimm>}]
 0011100110---------------------- LDRSB	<Xt>, [<Xn|SP>{, #<pimm>}]
 0011100111---------------------- LDRSB	<Wt>, [<Xn|SP>{, #<pimm>}]
-0011110100---------------------- STR	<Bt>, [<Xn|SP>{, #<pimm>}]
+0011110100---------------------- :LoadStore: STR	<Bt>, [<Xn|SP>{, #<pimm>}]
 0011110101---------------------- :LoadStore: LDR	<Bt>, [<Xn|SP>{, #<pimm>}]
-0011110110---------------------- STR	<Qt>, [<Xn|SP>{, #<pimm>}]
+0011110110---------------------- :LoadStore: STR	<Qt>, [<Xn|SP>{, #<pimm>}]
 0011110111---------------------- :LoadStore: LDR	<Qt>, [<Xn|SP>{, #<pimm>}]
 0111100100---------------------- STRH	<Wt>, [<Xn|SP>{, #<pimm>}]
 0111100101---------------------- LDRH	<Wt>, [<Xn|SP>{, #<pimm>}]
 0111100110---------------------- LDRSH	<Xt>, [<Xn|SP>{, #<pimm>}]
 0111100111---------------------- LDRSH	<Wt>, [<Xn|SP>{, #<pimm>}]
-0111110100---------------------- STR	<Ht>, [<Xn|SP>{, #<pimm>}]
+0111110100---------------------- :LoadStore: STR	<Ht>, [<Xn|SP>{, #<pimm>}]
 0111110101---------------------- :LoadStore: LDR	<Ht>, [<Xn|SP>{, #<pimm>}]
 1-11100111---------------------- Unallocated
 1-1111011----------------------- Unallocated
-1011100100---------------------- STR	<Wt>, [<Xn|SP>{, #<pimm>}]
+1011100100---------------------- :LoadStore: STR	<Wt>, [<Xn|SP>{, #<pimm>}]
 1011100101---------------------- :LoadStore: LDR	<Wt>, [<Xn|SP>{, #<pimm>}]
 1011100110---------------------- LDRSW	<Xt>, [<Xn|SP>{, #<pimm>}]
-1011110100---------------------- STR	<St>, [<Xn|SP>{, #<pimm>}]
+1011110100---------------------- :LoadStore: STR	<St>, [<Xn|SP>{, #<pimm>}]
 1011110101---------------------- :LoadStore: LDR	<St>, [<Xn|SP>{, #<pimm>}]
-1111100100---------------------- STR	<Xt>, [<Xn|SP>{, #<pimm>}]
+1111100100---------------------- :LoadStore: STR	<Xt>, [<Xn|SP>{, #<pimm>}]
 1111100101---------------------- :LoadStore: LDR	<Xt>, [<Xn|SP>{, #<pimm>}]
 1111100110---------------------- PRFM	(<prfop>|#<imm5>), [<Xn|SP>{, #<pimm>}]
-1111110100---------------------- STR	<Dt>, [<Xn|SP>{, #<pimm>}]
+1111110100---------------------- :LoadStore: STR	<Dt>, [<Xn|SP>{, #<pimm>}]
 1111110101---------------------- :LoadStore: LDR	<Dt>, [<Xn|SP>{, #<pimm>}]
 
 xxxx101xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - register
@@ -624,7 +624,7 @@ x1x11010110xxxxxxxxxxxxxxxxxxxxx		Data-processing (1 source)
 
 xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 0--01010--------1--------------- Unallocated
-00001010--0--------------------- AND	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+00001010--0--------------------- :Integer: AND	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 00001010--1--------------------- BIC	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 00101010--0--------------------- :Integer: ORR	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 MOV	<Wd>, <Wm>
@@ -635,7 +635,7 @@ xxx01010xxxxxxxxxxxxxxxxxxxxxxxx		Logical (shifted register)
 01101010--0--------------------- :CondFlagAsOutput:Integer: ANDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 TST	<Wn>, <Wm>{, <shift> #<amount>}
 01101010--1--------------------- :CondFlagAsOutput: BICS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
-10001010--0--------------------- AND	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+10001010--0--------------------- :Integer: AND	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 10001010--1--------------------- BIC	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 10101010--0--------------------- :Integer: ORR	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 MOV	<Xd>, <Xm>
@@ -653,7 +653,7 @@ xxx01011xx0xxxxxxxxxxxxxxxxxxxxx		Add/subtract (shifted register)
 00001011--0--------------------- :Integer: ADD	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 00101011--0--------------------- :CondFlagAsOutput: ADDS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 CMN	<Wn>, <Wm>{, <shift> #<amount>}
-01001011--0--------------------- SUB	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
+01001011--0--------------------- :MultiCycle: SUB	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 NEG	<Wd>, <Wm>{, <shift> #<amount>}
 01101011--0--------------------- :CondFlagAsOutput:Integer: SUBS	<Wd>, <Wn>, <Wm>{, <shift> #<amount>}
 				 CMP	<Wn>, <Wm>{, <shift> #<amount>}
@@ -661,7 +661,7 @@ xxx01011xx0xxxxxxxxxxxxxxxxxxxxx		Add/subtract (shifted register)
 10001011--0--------------------- :Integer: ADD	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 10101011--0--------------------- :CondFlagAsOutput: ADDS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 CMN	<Xn>, <Xm>{, <shift> #<amount>}
-11001011--0--------------------- SUB	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+11001011--0--------------------- :MultiCycle: SUB	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 NEG	<Xd>, <Xm>{, <shift> #<amount>}
 11101011--0--------------------- :CondFlagAsOutput:Integer: SUBS	<Xd>, <Xn>, <Xm>{, <shift> #<amount>}
 				 CMP	<Xn>, <Xm>{, <shift> #<amount>}
@@ -675,13 +675,13 @@ xxx01011xx1xxxxxxxxxxxxxxxxxxxxx		Add/subtract (extended register)
 00001011001--------------------- :Integer: ADD	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 00101011001--------------------- :CondFlagAsOutput: ADDS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 				 CMN	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
-01001011001--------------------- SUB	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
+01001011001--------------------- :MultiCycle: SUB	<Wd|WSP>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 01101011001--------------------- :CondFlagAsOutput:Integer: SUBS	<Wd>, <Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 				 CMP	<Wn|WSP>, <Wm>{, <extend> {#<amount>}}
 10001011001--------------------- :Integer: ADD	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 10101011001--------------------- :CondFlagAsOutput: ADDS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 				 CMN	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
-11001011001--------------------- SUB	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
+11001011001--------------------- :MultiCycle: SUB	<Xd|SP>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 11101011001--------------------- :CondFlagAsOutput:Integer: SUBS	<Xd>, <Xn|SP>, <R><m>{, <extend> {#<amount>}}
 				 CMP	<Xn|SP>, <R><m>{, <extend> {#<amount>}}
 
@@ -691,10 +691,10 @@ xxx11010010xxxxxxxxx0xxxxxxxxxxx		Conditional compare (register)
 ---11010010---------0------1---- Unallocated
 ---11010010---------01---------- Unallocated
 --011010010---------0----------- Unallocated
-00111010010---------00-----0---- :CondFlagAsOutput: CCMN	<Wn>, <Wm>, #<nzcv>, <cond>
-01111010010---------00-----0---- :CondFlagAsOutput: CCMP	<Wn>, <Wm>, #<nzcv>, <cond>
-10111010010---------00-----0---- :CondFlagAsOutput: CCMN	<Xn>, <Xm>, #<nzcv>, <cond>
-11111010010---------00-----0---- :CondFlagAsOutput: CCMP	<Xn>, <Xm>, #<nzcv>, <cond>
+00111010010---------00-----0---- :Integer:CondFlagAsOutput: CCMN	<Wn>, <Wm>, #<nzcv>, <cond>
+01111010010---------00-----0---- :Integer:CondFlagAsOutput: CCMP	<Wn>, <Wm>, #<nzcv>, <cond>
+10111010010---------00-----0---- :Integer:CondFlagAsOutput: CCMN	<Xn>, <Xm>, #<nzcv>, <cond>
+11111010010---------00-----0---- :Integer:CondFlagAsOutput: CCMP	<Xn>, <Xm>, #<nzcv>, <cond>
 
 xxx11010010xxxxxxxxx1xxxxxxxxxxx		Conditional compare (immediate)
 ---11010010---------1------1---- Unallocated
@@ -815,13 +815,13 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 010111100-100001011010---------- Unallocated
 010111100-100001101010---------- FCVTNS	<V><d>, <V><n>
 010111100-100001101110---------- FCVTMS	<V><d>, <V><n>
-010111100-100001110010---------- FCVTAS	<V><d>, <V><n>
-010111100-100001110110---------- SCVTF	<V><d>, <V><n>
+010111100-100001110010---------- :LoadStore:Neon: FCVTAS	<V><d>, <V><n>
+010111100-100001110110---------- :Neon: SCVTF	<V><d>, <V><n>
 010111101-100000110010---------- FCMGT	<V><d>, <V><n>, #0.0
 010111101-100000110110---------- FCMEQ	<V><d>, <V><n>, #0.0
 010111101-100000111010---------- FCMLT	<V><d>, <V><n>, #0.0
 010111101-100001101010---------- FCVTPS	<V><d>, <V><n>
-010111101-100001101110---------- FCVTZS	<V><d>, <V><n>
+010111101-100001101110---------- :LoadStore:Neon: FCVTZS	<V><d>, <V><n>
 010111101-100001110110---------- FRECPE	<V><d>, <V><n>
 010111101-100001111110---------- FRECPX	<V><d>, <V><n>
 01111110--100000001110---------- USQADD	<V><d>, <V><n>
@@ -914,7 +914,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 01111110--1-----010011---------- UQSHL	<V><d>, <V><n>, <V><m>
 01111110--1-----010101---------- URSHL	<V><d>, <V><n>, <V><m>
 01111110--1-----010111---------- UQRSHL	<V><d>, <V><n>, <V><m>
-01111110--1-----100001---------- SUB	<V><d>, <V><n>, <V><m>
+01111110--1-----100001---------- :Neon: SUB	<V><d>, <V><n>, <V><m>
 01111110--1-----100011---------- CMEQ	<V><d>, <V><n>, <V><m>
 01111110--1-----101001---------- Unallocated
 01111110--1-----101011---------- Unallocated
@@ -1002,16 +1002,16 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-0011100-100001100110---------- FRINTM	<Vd>.<T>, <Vn>.<T>
 0-0011100-100001101010---------- FCVTNS	<Vd>.<T>, <Vn>.<T>
 0-0011100-100001101110---------- FCVTMS	<Vd>.<T>, <Vn>.<T>
-0-0011100-100001110010---------- FCVTAS	<Vd>.<T>, <Vn>.<T>
-0-0011100-100001110110---------- SCVTF	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001110010---------- :LoadStore:Neon: FCVTAS	<Vd>.<T>, <Vn>.<T>
+0-0011100-100001110110---------- :Neon:LoadStore: SCVTF	<Vd>.<T>, <Vn>.<T>
 0-0011101-100000110010---------- FCMGT	<Vd>.<T>, <Vn>.<T>, #0.0
 0-0011101-100000110110---------- FCMEQ	<Vd>.<T>, <Vn>.<T>, #0.0
 0-0011101-100000111010---------- FCMLT	<Vd>.<T>, <Vn>.<T>, #0.0
-0-0011101-100000111110---------- FABS	<Vd>.<T>, <Vn>.<T>
+0-0011101-100000111110---------- :Neon: FABS	<Vd>.<T>, <Vn>.<T>
 0-0011101-100001100010---------- FRINTP	<Vd>.<T>, <Vn>.<T>
 0-0011101-100001100110---------- FRINTZ	<Vd>.<T>, <Vn>.<T>
 0-0011101-100001101010---------- FCVTPS	<Vd>.<T>, <Vn>.<T>
-0-0011101-100001101110---------- FCVTZS	<Vd>.<T>, <Vn>.<T>
+0-0011101-100001101110---------- :LoadStore:Neon: FCVTZS	<Vd>.<T>, <Vn>.<T>
 0-0011101-100001110010---------- URECPE <Vd>.<T>, <Vn>.<T>
 0-0011101-100001110110---------- FRECPE	<Vd>.<T>, <Vn>.<T>
 0-0011101-100001111110---------- Unallocated
@@ -1094,7 +1094,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-0011100-1-----111011---------- Unallocated
 0-0011100-1-----111101---------- FMAX	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011100-1-----111111---------- FRECPS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-001110001-----000111---------- AND	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-001110001-----000111---------- :Integer: AND	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-001110011-----000111---------- BIC	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011101-1-----110001---------- FMINNM	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-0011101-1-----110011---------- FMLS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
@@ -1122,7 +1122,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-101110--1-----011011---------- UMIN	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110--1-----011101---------- UABD	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110--1-----011111---------- UABA	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-101110--1-----100001---------- SUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-101110--1-----100001---------- :Neon: SUB	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110--1-----100011---------- CMEQ	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110--1-----100101---------- MLS	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110--1-----100111---------- PMUL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
@@ -1137,7 +1137,7 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 0-1011100-1-----111001---------- FCMGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----111011---------- FACGE	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011100-1-----111101---------- FMAXP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
-0-1011100-1-----111111---------- FDIV	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
+0-1011100-1-----111111---------- :Neon: FDIV	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110001-----000111---------- EOR	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-101110011-----000111---------- BSL	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
 0-1011101-1-----110001---------- FMINNMP	<Vd>.<T>, <Vn>.<T>, <Vm>.<T>
@@ -1153,21 +1153,21 @@ xxxx111xxxxxxxxxxxxxxxxxxxxxxxxx	Data processing - SIMD and floating point
 
 0xx0111100000xxxxxxxx1xxxxxxxxxx		Advanced SIMD modified immediate
 0--0111100000-------11---------- Unallocated
-0-00111100000---0--001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---0--001---------- :Neon: MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-00111100000---0--101---------- ORR	<Vd>.<T>, #<imm8>{, LSL #<amount>}
-0-00111100000---10-001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
+0-00111100000---10-001---------- :Neon: MOVI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-00111100000---10-101---------- ORR	<Vd>.<T>, #<imm8>{, LSL #<amount>}
-0-00111100000---110-01---------- MOVI	<Vd>.<T>, #<imm8>, MSL #<amount>
-0-00111100000---111001---------- MOVI	<Vd>.<T>, #<imm8>{, LSL #0}
+0-00111100000---110-01---------- :Neon: MOVI	<Vd>.<T>, #<imm8>, MSL #<amount>
+0-00111100000---111001---------- :Neon: MOVI	<Vd>.<T>, #<imm8>{, LSL #0}
 0-00111100000---111101---------- :Neon: FMOV	<Vd>.<T>, #<imm>
 0-10111100000---0--001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---0--101---------- BIC	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---10-001---------- MVNI	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---10-101---------- BIC	<Vd>.<T>, #<imm8>{, LSL #<amount>}
 0-10111100000---110-01---------- MVNI	<Vd>.<T>, #<imm8>, MSL #<amount>
-0010111100000---111001---------- MOVI	<Dd>, #<imm>
+0010111100000---111001---------- :Neon: MOVI	<Dd>, #<imm>
 0010111100000---111101---------- Unallocated
-0110111100000---111001---------- MOVI	<Vd>.2D, #<imm>
+0110111100000---111001---------- :Neon: MOVI	<Vd>.2D, #<imm>
 0110111100000---111101---------- :Neon: FMOV	<Vd>.2D, #<imm>
 
 0xx011110xxxxxxxxxxxx1xxxxxxxxxx		Advanced SIMD shift by immediate
@@ -1188,9 +1188,9 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 00011110001-111-000000---------- Unallocated
 0001111000100000000000---------- FCVTNS	<Wd>, <Sn>
 0001111000100001000000---------- FCVTNU	<Wd>, <Sn>
-0001111000100010000000---------- SCVTF	<Sd>, <Wn>
+0001111000100010000000---------- :Neon: SCVTF	<Sd>, <Wn>
 0001111000100011000000---------- UCVTF	<Sd>, <Wn>
-0001111000100100000000---------- FCVTAS	<Wd>, <Sn>
+0001111000100100000000---------- :LoadStore:Neon: FCVTAS	<Wd>, <Sn>
 0001111000100101000000---------- FCVTAU	<Wd>, <Sn>
 0001111000100110000000---------- :LoadStore: FMOV	<Wd>, <Sn>
 0001111000100111000000---------- :LoadStore: FMOV	<Sd>, <Wn>
@@ -1199,41 +1199,41 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 000111100011-11-000000---------- Unallocated
 0001111000110000000000---------- FCVTMS	<Wd>, <Sn>
 0001111000110001000000---------- FCVTMU	<Wd>, <Sn>
-0001111000111000000000---------- FCVTZS	<Wd>, <Sn>
+0001111000111000000000---------- :LoadStore:Neon: FCVTZS	<Wd>, <Sn>
 0001111000111001000000---------- FCVTZU	<Wd>, <Sn>
 00011110011--11-000000---------- Unallocated
 0001111001100000000000---------- FCVTNS	<Wd>, <Dn>
 0001111001100001000000---------- FCVTNU	<Wd>, <Dn>
-0001111001100010000000---------- SCVTF	<Dd>, <Wn>
+0001111001100010000000---------- :Neon: SCVTF	<Dd>, <Wn>
 0001111001100011000000---------- UCVTF	<Dd>, <Wn>
-0001111001100100000000---------- FCVTAS	<Wd>, <Dn>
+0001111001100100000000---------- :LoadStore:Neon: FCVTAS	<Wd>, <Dn>
 0001111001100101000000---------- FCVTAU	<Wd>, <Dn>
 0001111001101000000000---------- FCVTPS	<Wd>, <Dn>
 0001111001101001000000---------- FCVTPU	<Wd>, <Dn>
 0001111001110000000000---------- FCVTMS	<Wd>, <Dn>
 0001111001110001000000---------- FCVTMU	<Wd>, <Dn>
-0001111001111000000000---------- FCVTZS	<Wd>, <Dn>
+0001111001111000000000---------- :LoadStore:Neon: FCVTZS	<Wd>, <Dn>
 0001111001111001000000---------- FCVTZU	<Wd>, <Dn>
 00011110101--11-000000---------- Unallocated
 10011110001--11-000000---------- Unallocated
 1001111000100000000000---------- FCVTNS	<Xd>, <Sn>
 1001111000100001000000---------- FCVTNU	<Xd>, <Sn>
-1001111000100010000000---------- SCVTF	<Sd>, <Xn>
+1001111000100010000000---------- :Neon: SCVTF	<Sd>, <Xn>
 1001111000100011000000---------- UCVTF	<Sd>, <Xn>
-1001111000100100000000---------- FCVTAS	<Xd>, <Sn>
+1001111000100100000000---------- :LoadStore:Neon: FCVTAS	<Xd>, <Sn>
 1001111000100101000000---------- FCVTAU	<Xd>, <Sn>
 1001111000101000000000---------- FCVTPS	<Xd>, <Sn>
 1001111000101001000000---------- FCVTPU	<Xd>, <Sn>
 1001111000110000000000---------- FCVTMS	<Xd>, <Sn>
 1001111000110001000000---------- FCVTMU	<Xd>, <Sn>
-1001111000111000000000---------- FCVTZS	<Xd>, <Sn>
+1001111000111000000000---------- :LoadStore:Neon: FCVTZS	<Xd>, <Sn>
 1001111000111001000000---------- FCVTZU	<Xd>, <Sn>
 10011110011-111-000000---------- Unallocated
 1001111001100000000000---------- FCVTNS	<Xd>, <Dn>
 1001111001100001000000---------- FCVTNU	<Xd>, <Dn>
-1001111001100010000000---------- SCVTF	<Dd>, <Xn>
+1001111001100010000000---------- :Neon: SCVTF	<Dd>, <Xn>
 1001111001100011000000---------- UCVTF	<Dd>, <Xn>
-1001111001100100000000---------- FCVTAS	<Xd>, <Dn>
+1001111001100100000000---------- :LoadStore:Neon: FCVTAS	<Xd>, <Dn>
 1001111001100101000000---------- FCVTAU	<Xd>, <Dn>
 1001111001100110000000---------- :LoadStore: FMOV	<Xd>, <Dn>
 1001111001100111000000---------- :LoadStore: FMOV	<Dd>, <Xn>
@@ -1242,7 +1242,7 @@ x0x11110xx1xxxxx000000xxxxxxxxxx		Conversion between floating-point and integer
 100111100111-11-000000---------- Unallocated
 1001111001110000000000---------- FCVTMS	<Xd>, <Dn>
 1001111001110001000000---------- FCVTMU	<Xd>, <Dn>
-1001111001111000000000---------- FCVTZS	<Xd>, <Dn>
+1001111001111000000000---------- :LoadStore:Neon: FCVTZS	<Xd>, <Dn>
 1001111001111001000000---------- FCVTZU	<Xd>, <Dn>
 10011110101-011-000000---------- Unallocated
 1001111010101110000000---------- :LoadStore: FMOV	<Xd>, <Vn>.D[1]
@@ -1256,7 +1256,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 -0-11110--11-----10000---------- Unallocated
 -0111110--1------10000---------- Unallocated
 0001111000100000010000---------- :Neon: FMOV	<Sd>, <Sn>
-0001111000100000110000---------- FABS	<Sd>, <Sn>
+0001111000100000110000---------- :Neon: FABS	<Sd>, <Sn>
 0001111000100001010000---------- :Neon: FNEG	<Sd>, <Sn>
 0001111000100001110000---------- FSQRT	<Sd>, <Sn>
 0001111000100010010000---------- Unallocated
@@ -1272,7 +1272,7 @@ x0x11110xx1xxxxxx10000xxxxxxxxxx		Floating-point data-processing
 0001111000100111010000---------- FRINTX	<Sd>, <Sn>
 0001111000100111110000---------- FRINTI	<Sd>, <Sn>
 0001111001100000010000---------- :Neon: FMOV	<Dd>, <Dn>
-0001111001100000110000---------- FABS	<Dd>, <Dn>
+0001111001100000110000---------- :Neon: FABS	<Dd>, <Dn>
 0001111001100001010000---------- :Neon: FNEG	<Dd>, <Dn>
 0001111001100001110000---------- FSQRT	<Dd>, <Dn>
 0001111001100010010000---------- FCVT	<Sd>, <Dn>
@@ -1304,12 +1304,12 @@ x0x11110xx1xxxxxxx1000xxxxxxxxxx		Floating-point compare
 -0111110--1-------1000---------- Unallocated
 00011110001-----001000-----00000 :CondFlagAsOutput:Neon: FCMP	<Sn>, <Sm>
 00011110001-----001000-----01000 :CondFlagAsOutput:Neon: FCMP	<Sn>, #0.0
-00011110001-----001000-----10000 FCMPE	<Sn>, <Sm>
-00011110001-----001000-----11000 FCMPE	<Sn>, #0.0
+00011110001-----001000-----10000 :Neon: FCMPE	<Sn>, <Sm>
+00011110001-----001000-----11000 :Neon: FCMPE	<Sn>, #0.0
 00011110011-----001000-----00000 :CondFlagAsOutput:Neon: FCMP	<Dn>, <Dm>
 00011110011-----001000-----01000 :CondFlagAsOutput:Neon: FCMP	<Dn>, #0.0
-00011110011-----001000-----10000 FCMPE	<Dn>, <Dm>
-00011110011-----001000-----11000 FCMPE	<Dn>, #0.0
+00011110011-----001000-----10000 :Neon: FCMPE	<Dn>, <Dm>
+00011110011-----001000-----11000 :Neon: FCMPE	<Dn>, #0.0
 10-11110--1-------1000---------- Unallocated
 
 x0x11110xx1xxxxxxxx100xxxxxxxxxx		Floating-point immediate
@@ -1333,7 +1333,7 @@ x0x11110xx1xxxxxxxxx10xxxxxxxxxx		Floating-point data-processing (2 source)
 -0-11110101---------10---------- Unallocated
 -0111110--1---------10---------- Unallocated
 00011110001-----000010---------- :Neon: FMUL	<Sd>, <Sn>, <Sm>
-00011110001-----000110---------- FDIV	<Sd>, <Sn>, <Sm>
+00011110001-----000110---------- :Neon: FDIV	<Sd>, <Sn>, <Sm>
 00011110001-----001010---------- :Neon: FADD	<Sd>, <Sn>, <Sm>
 00011110001-----001110---------- :Neon: FSUB	<Sd>, <Sn>, <Sm>
 00011110001-----010010---------- FMAX	<Sd>, <Sn>, <Sm>
@@ -1342,7 +1342,7 @@ x0x11110xx1xxxxxxxxx10xxxxxxxxxx		Floating-point data-processing (2 source)
 00011110001-----011110---------- FMINNM	<Sd>, <Sn>, <Sm>
 00011110001-----100010---------- FNMUL	<Sd>, <Sn>, <Sm>
 00011110011-----000010---------- :Neon: FMUL	<Dd>, <Dn>, <Dm>
-00011110011-----000110---------- FDIV	<Dd>, <Dn>, <Dm>
+00011110011-----000110---------- :Neon: FDIV	<Dd>, <Dn>, <Dm>
 00011110011-----001010---------- :Neon: FADD	<Dd>, <Dn>, <Dm>
 00011110011-----001110---------- :Neon: FSUB	<Dd>, <Dn>, <Dm>
 00011110011-----010010---------- FMAX	<Dd>, <Dn>, <Dm>
